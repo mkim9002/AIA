@@ -1,73 +1,55 @@
 import pandas as pd
+import datetime
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.layers import Input, Dense
-from tensorflow.keras.models import Model
-from tensorflow.keras.callbacks import EarlyStopping
-from sklearn.preprocessing import MaxAbsScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, Normalizer
 from sklearn.neighbors import LocalOutlierFactor
-from sklearn.metrics import f1_score, make_scorer, accuracy_score
-
 
 # 훈련 데이터 및 테스트 데이터 로드
-path = 'd:/study_data/_data/gas/'
-save_path = 'd:/study_data/_save/gas/'
+path='d:/study_data/_data/gas/'
+save_path= 'd:/study_data/_save/gas/'
 train_data = pd.read_csv(path+'train_data.csv')
 test_data = pd.read_csv(path+'test_data.csv')
 submission = pd.read_csv(path+'answer_sample.csv')
 
-
-# Combine train and test data
-data = pd.concat([train_data, test_data], axis=0)
-
 # Preprocess data
 def type_to_HP(type):
-    HP=[60,60,60,60,60,60,60,60]
+    HP=[40,30,20,60,20,20,20,10]
     gen=(HP[i] for i in type)
     return list(gen)
-train_data['type'] = type_to_HP(train_data['type'])
-test_data['type'] = type_to_HP(test_data['type'])
+train_data['type']=type_to_HP(train_data['type'])
+test_data['type']=type_to_HP(test_data['type'])
 
+# Select subset of features for LOF model
+features = ['air_inflow', 'air_end_temp', 'out_pressure', 'motor_current', 'motor_rpm', 'motor_temp', 'motor_vibe']
 
-# Select subset of features for Autoencoder model
-features = ['air_inflow', 'air_end_temp', 'motor_current', 'motor_rpm', 'motor_temp', 'motor_vibe']
+# Prepare train and test data
+X = train_data[features]
 
 # Split data into train and validation sets
-x_train, x_val = train_test_split(data[features], train_size=0.9, random_state=555)
+X_train, X_val = train_test_split(X, train_size= 0.9, random_state= 5555)
 
 # Normalize data
-scaler = MaxAbsScaler()
-x_train = scaler.fit_transform(x_train)
-x_val = scaler.transform(x_val)
+scaler = MinMaxScaler()
+X_train = scaler.fit_transform(X_train)
+X_val = scaler.transform(X_val)
 
-# Define Autoencoder model
-input_layer = Input(shape=(len(features),))
-encoder = Dense(4, activation='relu')(input_layer)
-decoder = Dense(len(features), activation='sigmoid')(encoder)
-autoencoder = Model(inputs=input_layer, outputs=decoder)
+# Apply Local Outlier Factor
+lof = LocalOutlierFactor(n_neighbors=20, contamination=0.1)
+y_pred_train = lof.fit_predict(X_train)
 
-# Compile Autoencoder model
-autoencoder.compile(optimizer='adam', loss='mean_squared_error')
+# Tuning: Adjust the n_neighbors and contamination parameters
+lof_tuned = LocalOutlierFactor(n_neighbors=37, contamination=0.048)
+y_pred_train_tuned = lof_tuned.fit_predict(X_train)
 
-# Train Autoencoder model
-es = EarlyStopping(monitor='val_loss', mode='auto', verbose=1, patience=60)
-autoencoder.fit(x_train, x_train, epochs=3000, batch_size=20, validation_data=(x_val, x_val), callbacks=[es])
+# Predict anomalies in test data using tuned LOF
+test_data_lof = scaler.transform(test_data[features])
+y_pred_test_lof = lof_tuned.fit_predict(test_data_lof)
+lof_predictions = [1 if x == -1 else 0 for x in y_pred_test_lof]
 
-# Predict anomalies in test data
-test_data = scaler.transform(test_data[features])
-predictions = autoencoder.predict(test_data)
-mse = ((test_data - predictions) ** 2).mean(axis=1)
-
-# Use LOF to detect anomalies
-clf = LocalOutlierFactor(n_neighbors=20, contamination=0.1)
-binary_predictions = [1 if x == -1 else 0 for x in clf.fit_predict(test_data)]
-
-# Combine predictions from Autoencoder and LOF
-final_predictions = [1 if x+y >= 1 else 0 for x, y in zip(binary_predictions, mse > (mse.mean() + mse.std() * 2))]
-
-submission['label'] = pd.DataFrame({'Prediction': final_predictions})
-
-# Save submission file
-import datetime 
-date = datetime.datetime.now()  
+submission['label'] = pd.DataFrame({'Prediction': lof_predictions})
+print(submission.value_counts())
+#time
+date = datetime.datetime.now()
 date = date.strftime("%m%d_%H%M")
-submission.to_csv(save_path + date + 'submit12.csv', index=False)
+
+submission.to_csv(save_path + date + 'submission.csv', index=False)
