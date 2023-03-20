@@ -1,0 +1,28 @@
+from sklearn.preprocessing import MinMaxScaler,MaxAbsScaler,StandardScaler, RobustScaler
+
+scaler = MinMaxScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+test_csv = scaler.transform(test_csv)
+
+
+
+scaler = MaxAbsScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+test_csv = scaler.transform(test_csv)
+
+
+
+scaler = RobustScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+test_csv = scaler.transform(test_csv)
+
+
+
+scaler = StandardScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+test_csv = scaler.transform(test_csv)
+
