@@ -1,6 +1,6 @@
 import numpy as np
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, SimpleRNN, LSTM
+from tensorflow.keras.layers import Dense, SimpleRNN, LSTM, GRU
 from tensorflow.python.keras.callbacks import EarlyStopping
 
 
@@ -19,7 +19,10 @@ print(x.shape) #(5, 5, 1)
 
 #2. model
 model = Sequential()                #[batch, timesteps, feature]
-model.add(LSTM(10, input_shape=(5,1))) # (10*10) +(1*10) +10 =120
+                                    #[batch, input_length, input_dim]
+model.add(GRU(10, input_shape=(5,1))) # (10*10) +(1*10) +10 =120
+
+
 #units * (feature + bias + units)= params
 # units * units + units*feature +units *bias
 model.add(Dense(10, activation='relu'))
