@@ -30,9 +30,13 @@ print(a)
 a1 = a[:, :4]
 print(a1)
 
+x = x.reshape(96, 4, 1)
+
+a1 = a1.reshape(6, 4 , 1)
+
 #2. model
 model = Sequential()
-model.add(Dense(64, input_shape=(4,)))
+model.add(LSTM(64, input_shape=(4,1), activation='linear', recurrent_activation='tanh'))
 model.add(Dense(10))
 model.add(Dense(10))
 model.add(Dense(10))
@@ -47,6 +51,7 @@ model.fit(x,y, epochs=100, callbacks=[es])
 
 #4. evaluate, predict
 loss = model.evaluate(x,y)
+a1 = a1.reshape(6, 4 ,1)
 
 result = model.predict(a1)
 print('loss :', loss)
