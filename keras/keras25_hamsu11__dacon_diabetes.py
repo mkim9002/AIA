@@ -55,6 +55,8 @@ x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 test_csv = scaler.transform(test_csv)
 
+print(x.shape, y.shape) #(652, 8) (652,)
+
 #2. 모델 구성
 # model = Sequential()
 # model.add(Dense(10, activation='relu',input_dim =8)) #print x shape의 (506. 13)input_dim은 x_shape두번째를를 본다

@@ -1,0 +1,107 @@
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.layers import Dense, Conv2D, Conv1D, Flatten, Dropout, MaxPooling2D, SimpleRNN
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score,mean_squared_error
+import numpy as np
+import pandas as pd
+
+
+# 1. 데이터
+#1.1 경로 , 가져오기
+path = './_data/ddarung/'
+path_save = './_save/ddarung/' 
+
+train_csv = pd.read_csv(path +'train.csv', index_col=0)
+test_csv = pd.read_csv(path +'test.csv', index_col=0)
+
+#1.2 확인사항 5 가지
+
+
+#1.3 결축지 제거
+print(train_csv.isnull().sum())
+train_csv = train_csv.dropna()
+print(train_csv.isnull().sum())
+
+#1.4 x,y 분리
+x = train_csv.drop(['count'], axis=1)
+y = train_csv['count']
+
+x = np.array(x)
+x = x.reshape(1328, 3, 3)
+
+#1.5 train, test 분리
+x_train, x_test, y_train, y_test = train_test_split(
+    x, y, shuffle=True, train_size=0.8, random_state=34553
+    )     
+
+
+#2. 모델 구성
+model=Sequential()
+# model.add(LSTM(10, input_shape = (3,3)))  
+model.add(Conv1D(10,2,input_shape = (3,3))) 
+model.add(Conv1D(10,2))                    
+model.add(Conv1D(10,2, padding='same'))
+model.add(Flatten())
+model.add(Dense(5))
+model.add(Dense(1))
+
+model.summary()
+
+
+#3. 컴파일 훈련
+model.compile(loss='mse', optimizer='adam')
+
+from tensorflow.python.keras.callbacks import EarlyStopping
+es = EarlyStopping(monitor='val_loss', patience=20, mode = 'min',
+                   verbose=1,
+                   restore_best_weights=True
+                   )
+              
+
+
+
+hist = model.fit(x_train,y_train, epochs=20, batch_size=16,
+          validation_split=0.2,
+          verbose=1,
+          callbacks=(es),
+)
+     
+# print("===========================================================")
+# print(hist)
+# print("===========================================================")
+# print(hist.history)
+# print("===========================================================")
+# print(hist.history['loss'])
+print("===========================================================")
+print(hist.history['val_loss'])
+
+
+#4/ 평가 예측
+loss = model.evaluate(x_test,y_test)
+print('loss :', )
+
+y_predict = model.predict(x_test)
+r2 = r2_score(y_test, y_predict)
+print('r2 스코어 :', r2)
+#r2 스코어 : 0.6503924110719093
+
+#RMSE함수의 정의 
+def RMSE(y_test, y_predict): 
+    return np.sqrt(mean_squared_error(y_test, y_predict)) 
+#RMSE함수의 실행(사용)
+rmse = RMSE(y_test, y_predict)
+print("RMSE : ", rmse)
+
+
+import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = 'Malgun Gothic'
+plt.figure(figsize=(9,6))
+plt.plot(hist.history['loss'], marker = '.', c='red', label='로스')
+plt.plot(hist.history['val_loss'], marker = '.', c='blue', label='발_로스')
+plt.title('따릉이')
+plt.xlabel('epochs')
+plt.ylabel('loss,val_loss')
+plt.legend()
+plt.grid()
+plt.show()
+

@@ -1,62 +1,86 @@
 import numpy as np
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, LSTM
-from tensorflow.keras. callbacks import EarlyStopping
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from tensorflow.python.keras. models import Sequential
+from tensorflow.python.keras.layers import Dense, Conv1D, Flatten
+from tensorflow.python.keras.callbacks import EarlyStopping
+from sklearn.metrics import r2_score, mean_squared_error
 
 #1. data
-dataset = np.array(range(1, 101))
-timesteps = 5
-x_predict = np.array(range(96, 106))
+#1.1 import data
+path = './_data/kaggle_jena/'
 
-#100-106 예상값 ,시계열 데이터
+datasets = pd.read_csv( path +'jena_climate_2009_2016.csv', index_col=0)
+print(datasets)
+print(len(datasets))
+print(datasets.shape)
+print(datasets.columns)
+print(datasets.info())
+print(datasets.describe())
+print(type(datasets))
+
+print(datasets['T (degC)'].values)
+print(datasets['T (degC)'].to_numpy)
+
+x = datasets.drop(['T (degC)'], axis=1)
+y = datasets['T (degC)']
+
+x_train, x_test, _ , _ = train_test_split(x,y,train_size=0.7, shuffle=False)
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+scaler.fit(x_train)
+x = scaler.transform(x)
 
 def split_x(dataset, timesteps):
-    gen=(dataset[i : (i + timesteps)] for i in range(len(dataset)- timesteps +1))
-    return np.array(list(gen))
+    aaa=[]
+    for i in range(len(dataset) - timesteps):
+        subset = dataset[i : (i + timesteps)]
+        aaa.append(subset)
+    return np.array(aaa)
 
-bbb = split_x(dataset, timesteps)
-print(bbb)
-print(bbb.shape)
+x_train, x_test, y_train, y_test = train_test_split(x,y, train_size=0.7, shuffle=False)
+x_test, x_predict, y_test, y_predict = train_test_split(x_test, y_test, train_size=2/3, shuffle=False)
 
-x = bbb[:, :-1]
-y = bbb[:, 4:5]
+x_train_split = split_x(x_train, 6)
+x_test_split = split_x(x_test, 6)
+x_predict_split = split_x(x_predict, 6)
 
-print(x.shape)
-print(y.shape)
+y_train_split = y_train[6:]
+y_test_split = y_test[6:]
+y_predict_split = y_predict[6:]
 
-a = split_x(x_predict, timesteps)
-print(a)
+print(x_train.shape,y_train.shape)
+print(x_test.shape,y_test.shape)
+print(x_predict.shape,y_predict.shape)
 
-a1 = a[:, :4]
-print(a1)
-
-x = x.reshape(96, 4, 1)
-
-a1 = a1.reshape(6, 4 , 1)
-
-#2. model
+#2. 모델구성
 model = Sequential()
-model.add(LSTM(64, input_shape=(4,1), activation='linear', recurrent_activation='tanh'))
-model.add(Dense(10))
-model.add(Dense(10))
-model.add(Dense(10))
-model.add(Dense(10))
-model.add(Dense(10))
-model.add(Dense(1))
+model.add(Conv1D(2, 4, input_shape=(6, 13)))
+model.add(Flatten())
+model.add(Dense(1, activation='relu'))
+model.summary()
 
-#3.compile.practice
+# 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
-es = EarlyStopping(monitor='loss', mode='min', patience=100, restore_best_weights=True)
-model.fit(x,y, epochs=100, callbacks=[es])
+es = EarlyStopping(monitor='val_loss', patience=60, verbose=1, mode='min', restore_best_weights=True)
+hist = model.fit(x_train_split, y_train_split, epochs=100, batch_size=128, verbose=1, validation_split=0.2, callbacks=[es])
 
-#4. evaluate, predict
-loss = model.evaluate(x,y)
-a1 = a1.reshape(6, 4 ,1)
-
-result = model.predict(a1)
+# 4. 평가 , 예측
+loss = model.evaluate(x_predict_split, y_test_split)
 print('loss :', loss)
-print('result :', result)
 
-    
-    
-    
+predict = model.predict(x_predict_split)
+
+r2 = r2_score(y_predict, predict)
+print('r2 :', r2)
+
+def RMSE(x, y):
+    return np.sqrt(mean_squared_error(x, y))
+
+rmse = RMSE(y_predict_split, predict)
+print('rmse :', rmse)
+
+
+
+
+print('rmse :', rmse)

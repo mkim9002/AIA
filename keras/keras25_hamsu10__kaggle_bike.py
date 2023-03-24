@@ -75,7 +75,7 @@ x_test = scaler.transform(x_test)
 print(np.min(x_test), np.max)
 test_csv = scaler.transform(test_csv)
 
-
+print(x.shape, y.shape) #(10886, 8) (10886,)
 #2. 모델 구성
 # model = Sequential()
 # model.add(Dense(10, activation='sigmoid',input_dim =8)) #print x shape의 (506. 13)input_dim은 x_shape두번째를를 본다

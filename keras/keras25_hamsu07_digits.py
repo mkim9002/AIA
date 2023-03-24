@@ -54,6 +54,8 @@ scaler.fit(x_train)
 x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 
+
+print(x.shape, y.shape)
 #2. 모델구성
 # model = Sequential()
 # model.add(Dense(8, activation='relu', input_dim=64))

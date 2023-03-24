@@ -1,8 +1,7 @@
 from tensorflow.python.keras.models import Sequential, Model, load_model
 from tensorflow.python.keras.layers import Dense, Input,Dropout
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score, mean_squared_error
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import r2_score, mean_squared_error, accuracy_score
 import pandas as pd
 import numpy as np
 from sklearn.datasets import load_diabetes

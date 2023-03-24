@@ -12,7 +12,7 @@ from sklearn.preprocessing import MaxAbsScaler, RobustScaler
 datasets = fetch_california_housing()
 x = datasets.data
 y = datasets['target']
-print(x.shape, y.shape) #(506, 13) (506,)
+print(x.shape, y.shape) #(20640, 8) (20640,)
 
 scaler = MinMaxScaler()
 scaler.fit(x)

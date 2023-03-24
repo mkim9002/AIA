@@ -52,6 +52,6 @@ result = model.predict(a1)
 print('loss :', loss)
 print('result :', result)
 
-    
+#result : [[100.89088 ]
     
     

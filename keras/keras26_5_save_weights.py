@@ -36,6 +36,7 @@ x_test = scaler.transform(x_test)
 print(np.min(x_test), np.max)
 
 
+
 #2. 모델
 # model = Sequential()
 # model.add(Dense(30, input_shape=(13,)))

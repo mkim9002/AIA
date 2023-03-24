@@ -40,6 +40,7 @@ x_train = scaler.fit_transform(x_train) #아래 코드와 같다
 x_test = scaler.transform(x_test)
 print(np.min(x_test), np.max)
 
+print(x.shape, y.shape)
 """
 #2. 모델
 # model = Sequential()

@@ -43,6 +43,8 @@ x_test = scaler.transform(x_test)
 print(np.min(x_test), np.max)
 
 
+print(x.shape, y.shape) #(506, 13) (506,)
+
 #2. 모델
 
 

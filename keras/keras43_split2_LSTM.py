@@ -21,8 +21,8 @@ print(bbb.shape)
 x = bbb[:, :-1]
 y = bbb[:, 4:5]
 
-print(x.shape)
-print(y.shape)
+print(x.shape) #(96, 4)
+print(y.shape) #(96, 1)
 
 a = split_x(x_predict, timesteps)
 print(a)

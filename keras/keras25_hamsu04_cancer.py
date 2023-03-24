@@ -47,7 +47,7 @@ dense1 = Dense(10, activation = 'relu')(input1)
 dense2 = Dense(9, activation = 'linear')(dense1)
 dense3 = Dense(8, activation = 'linear')(dense2)
 dense4 = Dense(7, activation = 'linear')(dense3)
-output1 = Dense(1, activation = 'sigmoid')(dense4)
+output1 =Dense(1, activation = 'sigmoid')(dense4)
 model = Model(inputs=input1, outputs=output1)
 
 

@@ -19,6 +19,8 @@ y = datasets['target']
 print(type(x))
 print(x)
 
+
+print(x.shape, y.shape) #(506, 13) (506,)
 # 보스톤 1.2부터 임포트 안된다
 #pip uninstall scikit-learn
 #pip install scikit-learn==1.1
