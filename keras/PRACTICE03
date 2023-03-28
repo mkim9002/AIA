@@ -1,0 +1,49 @@
+# 바둑판의 크기를 정합니다
+BOARD_SIZE = 19
+
+# 바둑판을 나타내는 이차원 배열을 생성합니다
+board = [[0] * BOARD_SIZE for _ in range(BOARD_SIZE)]
+
+# 플레이어를 나타내는 상수를 정의합니다
+BLACK = 1
+WHITE = 2
+
+# 현재 차례를 나타내는 변수를 초기화합니다
+current_player = BLACK
+
+# 바둑판을 출력하는 함수를 정의합니다
+def print_board():
+    for row in board:
+        for cell in row:
+            if cell == BLACK:
+                print('B', end=' ')
+            elif cell == WHITE:
+                print('W', end=' ')
+            else:
+                print('.', end=' ')
+        print()
+
+# 플레이어의 입력을 받아 바둑판에 돌을 놓는 함수를 정의합니다
+def make_move():
+    global current_player
+    print('Player', current_player)
+    row = int(input('Enter row: '))
+    col = int(input('Enter column: '))
+    if board[row][col] != 0:
+        print('Invalid move')
+        make_move()
+    else:
+        board[row][col] = current_player
+        if current_player == BLACK:
+            current_player = WHITE
+        else:
+            current_player = BLACK
+
+# 게임을 실행하는 함수를 정의합니다
+def play_game():
+    while True:
+        print_board()
+        make_move()
+
+# 게임을 실행합니다
+play_game()
