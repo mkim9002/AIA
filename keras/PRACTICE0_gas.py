@@ -78,4 +78,4 @@ print("macro f1 score: ", macro_f1_score)
 
 submission = pd.read_csv(path +'answer_sample.csv',index_col='type') # index_col을 'type'으로 변경
 submission['label'] = test_clusters
-submission.to_csv(path_save+'submit_01.csv')
+submission.to_csv(path_save+'submit_03.csv')
