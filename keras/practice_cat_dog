@@ -1,0 +1,94 @@
+import numpy as np
+import os
+import time
+import tensorflow as tf
+from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+
+# 경로 설정
+path = 'd:/study_data/_data/cat_dog/petimages/'
+save_path = 'd:/study_data/_save/cat_dog/'
+
+# 이미지 데이터 불러오기 및 전처리
+train_datagen = ImageDataGenerator(
+    rescale=1./255,
+)
+
+test_datagen = ImageDataGenerator(
+    rescale=1./255,
+)
+
+xy_train = train_datagen.flow_from_directory(
+    path,
+    target_size=(100, 100),
+    batch_size=32,
+    class_mode='categorical',
+    color_mode='rgb',
+    shuffle=True,
+)
+
+xy_test = train_datagen.flow_from_directory(
+    path,
+    target_size=(100, 100),
+    batch_size=32,
+    class_mode='categorical',
+    color_mode='rgb',
+    shuffle=True,
+)
+
+# 모델 생성
+model = Sequential()
+model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(100, 100, 3)))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.25))
+model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.25))
+model.add(Flatten())
+model.add(Dense(128, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(2, activation='softmax'))
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# 모델 학습
+start_preprocessing = time.time()
+for i, (x, y) in enumerate(xy_train):
+    if i == 0:
+        start_image_processing = time.time()
+    elif i == len(xy_train)-1:
+        end_image_processing = time.time()
+        break
+    else:
+        pass
+end_preprocessing = time.time()
+print(f"Elapsed time for image preprocessing: {end_image_processing-start_image_processing} sec")
+print(f"Elapsed time for numpy array conversion: {end_preprocessing-start_preprocessing} sec")
+
+start_training = time.time()
+
+model.fit(
+    xy_train,
+    steps_per_epoch=len(xy_train),
+    epochs=2,
+    validation_data=xy_test,
+    validation_steps=len(xy_test),
+)
+
+end_training = time.time()
+
+print(f"Elapsed time for training: {end_training-start_training} sec")
+
+# 모델 저장
+model.save(save_path + 'cat_dog_classification.h5')
+
+# 새로운 이미지 분류 함수
+def predict_image(file_path):
+    img = load_img(file_path, target_size=(100, 100))
+    img_array = img_to_array(img) / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
+    result = model.predict(img_array)
+    if result[0][0] > result[0][1]:
+        print("Cat")
+    else:
+        print("Dog")

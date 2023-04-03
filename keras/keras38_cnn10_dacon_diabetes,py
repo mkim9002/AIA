@@ -40,8 +40,8 @@ print(np.unique(y)) #[0 1]
 
 # Reshape
 print(x.shape) #(652, 8)
-x = np.array(x)
-x = x.reshape(652, 4, 2, 1)
+# x = np.array(x)
+# x = x.reshape(652, 4, 2, 1)
 
 print(test_csv.shape) #(116, 8)
 
