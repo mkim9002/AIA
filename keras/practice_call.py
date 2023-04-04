@@ -1,137 +1,69 @@
-from tensorflow.python.keras.models import Sequential, Model, load_model
-from tensorflow.python.keras.layers import Dense, Input,Dropout
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score, mean_squared_error
-import pandas as pd
 import numpy as np
-from sklearn.datasets import load_diabetes
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-from sklearn.preprocessing import MaxAbsScaler, RobustScaler
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, MaxAbsScaler, RobustScaler
+from sklearn.metrics import r2_score, mean_squared_error, f1_score
+from sklearn.datasets import make_blobs
+from tensorflow.keras.models import Sequential 
+from tensorflow.keras.layers import Dense 
+from sklearn.model_selection import train_test_split 
 
-# 1. 데이터
-path = './_data/call/'   #점 하나 현재폴더의밑에 점하나는 스터디
-path_save = './_save/call/' 
+# 데이터 경로
+path = "d:/study_data/_data/gas/"
+path_save = "d:/study_data/_save/gas/"
 
-train_csv = pd.read_csv(path + 'train.csv',
-                       index_col=0) 
+# train 데이터
+train_csv = pd.read_csv(path + 'train_data.csv', index_col=0)
+print(train_csv)
+print(train_csv.shape) #(2463, 7)
 
-test_csv = pd.read_csv(path + 'test.csv',
-                       index_col=0) 
+# test 데이터
+test_csv = pd.read_csv(path + 'test_data.csv', index_col=0)
+print(test_csv) 
+print(test_csv.shape) #(7389, 7)
 
-print(test_csv)   #[116 rows x 8 columns]
+# 결측치 처리
+print('결측치 숫자 : ',train_csv.isnull().sum())  # 결측치 없음
 
-print(train_csv)  #[652 rows x 9 columns]
+# 데이터 분리
+x = train_csv.copy()
+scaler = StandardScaler()
+x = scaler.fit_transform(x)
 
-#결측치 처리 1 .제거
-# pirnt(train_csv.insul11())
-print(train_csv.isnull().sum())
-train_csv = train_csv.dropna() ####결측치 제거#####
-print(train_csv.isnull().sum()) #(11)
-print(train_csv.info())
-print(train_csv.shape)
+pca = PCA(n_components=2)
+pca_x = pca.fit_transform(x)
 
-############################## train_csv 데이터에서 x와y를 분리
-x = train_csv.drop(['전화해지여부'], axis=1) #2개 이상 리스트 
-print(x)
-y = train_csv['전화해지여부']
-print(y)
+kmeans = KMeans(n_clusters=3)
+kmeans.fit(pca_x)
 
+centers = kmeans.cluster_centers_
 
+fig, ax = plt.subplots(figsize=(10, 6))
+for i in range(3):
+    ax.scatter(pca_x[kmeans.labels_ == i, 0], pca_x[kmeans.labels_ == i, 1], label=f"Cluster {i+1}")
+ax.scatter(centers[:, 0], centers[:, 1], s=100, c='black', label='Centroids')
+ax.set_title('KMeans Clustering')
+ax.legend()
+plt.show()
 
-scaler = MinMaxScaler()
-scaler.fit(x)
-x = scaler.transform(x)
+train_clusters = kmeans.labels_
+print(train_clusters)
 
-###############################train_csv 데이터에서 x와y를 분리
-x_train, x_test, y_train, y_test = train_test_split(
-x, y, shuffle=True, train_size=0.7, random_state=777
-)
-print(x_train.shape, x_test.shape)
-print(y_train.shape, y_test.shape)
+train_csv['cluster'] = train_clusters
+print(train_csv)
 
-scaler = RobustScaler()
-scaler.fit(x_train)
-x_train = scaler.transform(x_train)
-x_test = scaler.transform(x_test)
-test_csv = scaler.transform(test_csv)
+# test 데이터 전처리 과정 (생략)
+test_x = scaler.transform(test_csv)
+test_pca_x = pca.transform(test_x)
+test_clusters = kmeans.predict(test_pca_x)
 
-#2. 모델 구성
-# model = Sequential()
-# model.add(Dense(10, activation='relu',input_dim =12))
-# model.add(Dropout(0.3))
-# model.add(Dense(9,activation='relu'))
-# model.add(Dropout(0.2))
-# model.add(Dense(8,activation='relu'))
-# model.add(Dropout(0.4))
-# model.add(Dense(7,activation='relu'))
-# model.add(Dropout(0.1))
-# model.add(Dense(1,activation='sigmoid'))
+# macro f1 score 계산
+macro_f1_score = f1_score(test_csv['type'], test_clusters, average='macro')
+print("macro f1 score: ", macro_f1_score)
 
-input1 = Input(shape=(12,))
-dense1 = Dense(10, activation = 'relu')(input1)
-dense2 = Dense(9, activation = 'relu')(dense1)
-dense3 = Dense(8, activation = 'relu')(dense2)
-dense4 = Dense(7, activation = 'relu')(dense3)
-output1 = Dense(1, activation = 'sigmoid')(dense4)
-model = Model(inputs=input1, outputs=output1)
-
-
-
-
-
-#3. 컴파일 훈련
-model.compile(loss='binary_crossentropy', optimizer='adam',
-              metrics=['accuracy','mse']
-              )
-
-from tensorflow.python.keras.callbacks import EarlyStopping
-es = EarlyStopping(monitor='val_loss', patience=10000, mode = 'min',
-                   verbose=1,
-                   restore_best_weights=True
-                   )
-              
-              
-
-
-
-hist = model.fit(x_train,y_train, epochs=10000, batch_size=999,
-          validation_split=0.01,
-          verbose=1,
-          callbacks=(es),
-)
-     
-# print("===========================================================")
-# print(hist)
-# print("===========================================================")
-# print(hist.history)
-# print("===========================================================")
-# print(hist.history['loss'])
-print("===========================================================")
-print(hist.history['val_loss'])
-
-
-#4/ 평가 예측
-results = model.evaluate(x_test,y_test)
-print('results :', results )
-
-y_predict = np.round(model.predict(x_test))
-
-from sklearn.metrics import r2_score, accuracy_score
-acc = accuracy_score(y_test, y_predict)
-print('acc ;', acc)
-
-#submission.csv 만들기
-y_submit = np.round(model.predict(test_csv)) #위에서 'test_csv'명명 -> test_csv예측값을 y_submit이라 함 
-# print(y_submit)
-
-submission = pd.read_csv(path + 'sample_submission.csv', index_col=0)
-submission['전화해지여부'] = y_submit
-# print(submission)
-
-import datetime
-date= datetime.datetime.now()
-date = date.strftime("%m%d_%H%M")
-
-path_save = './_save/call/' 
-submission.to_csv(path_save + 'submit' + date +'.csv')
-
+# 제출 파일 생성
+submission = pd.read_csv(path +'answer_sample.csv', index_col='type') # index_col을 'type'으로 변경
+submission['label'] = test_clusters
+submission.to_csv(path_save+'submit_04.csv')

@@ -1,33 +1,45 @@
-from tensorflow.keras.datasets import mnist
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-import numpy as np
-import pandas as pd
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense,Conv2D, Flatten
-from tensorflow.keras.callbacks import EarlyStopping
-from sklearn.metrics import accuracy_score
+from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.utils import to_categorical
+import pandas as pd
+import numpy as np
 
-(x_train,y_train),(x_test, y_test) =mnist.load_data()
-print(y_train)
-train_datagen = ImageDataGenerator(
-    rescale=1./255,
-    horizontal_flip=True,
-    width_shift_range=0.1,
-    height_shift_range=0.1,
-    rotation_range=5,
-    zoom_range=0.1,
-    shear_range=0.7,
-    fill_mode='nearest'
-)
+text = '나는 진짜 매우 매우 맛있는 밥을 엄청 마구 마구 마구 먹었다.'
 
-augment_size = 40000
+token = Tokenizer()
+token.fit_on_texts([text])
 
-np.random.seed(0)
-randidx = np.random.randint(x_train.shape[0], size=augment_size)
+print(token.word_index)  #{'마구': 1, '매우': 2, '나는': 3, '진짜': 4, '맛있는': 5, '밥을': 6, '엄청': 7, '먹었다': 8}
+print(token.word_counts)  #OrderedDict([('나는', 1), ('진짜', 1), ('매우', 2), ('맛있는', 1), ('밥을', 1), ('엄청', 1), ('마구', 3), ('먹었다', 1)])
 
-x_augmented = x_train[randidx].copy()
-y_augmented = y_train[randidx].copy()
+# convert text to sequence of integers
+x = token.texts_to_sequences([text])[0]
+print(x)  # [3, 4, 2, 2, 5, 6, 7, 1, 1, 1, 8]
 
-x_train = x_train.reshape(-1, 28, 28, 1)
-x_test = y_test.reshape(x_test.shape[0], x_test.shape[1])
+# convert integers to text
+word_index = token.word_index
+reverse_word_index = dict([(value, key) for (key, value) in word_index.items()])
+text = ' '.join([reverse_word_index.get(i, '?') for i in x])
+print(text)  # '나는 진짜 매우 매우 맛있는 밥을 엄청 마구 마구 마구 먹었다'
+
+# one-hot encode
+x_one_hot = []
+for i in x:
+    x_one_hot.append(to_categorical(i, num_classes=len(word_index)+1))
+x = np.array(x_one_hot)
+print(x)
+print(x.shape)  #(11, 9)
+
+# convert to pandas dataframe
+x_df = pd.DataFrame(x)
+
+# use get_dummies on each column separately
+x_one_hot = []
+for i in range(x.shape[1]):
+    col = x_df[i]
+    one_hot = pd.get_dummies(col)
+    x_one_hot.append(one_hot.values)
+
+# concatenate one-hot encoded columns
+x = np.concatenate(x_one_hot, axis=1)
+print(x)
+print(x.shape)

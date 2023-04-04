@@ -89,33 +89,28 @@ x_test = scaler.transform(x_test)
 
 
 #2. 모델 구성
+#2. 모델 구성
 model = Sequential()
 model.add(Conv2D(6,(2,2),padding='same', input_shape=(1,7,1)))
 model.add(Conv2D(filters=4, padding='same', kernel_size=(2,2), activation='relu'))
 model.add(Flatten())
 model.add(Dense(4, activation='relu'))
 model.add(Dropout(0.2))
-model.add(Dense(1, activation='sigmoid'))
-
+model.add(Dense(5, activation='softmax')) # change the number of neurons and the activation function
 
 #3. 컴파일 훈련
-model.compile(loss='binary_crossentropy', optimizer='adam',
+model.compile(loss='categorical_crossentropy', optimizer='adam', # change the loss function
               metrics=['accuracy','mse'])
 
-from tensorflow.python.keras.callbacks import EarlyStopping
-es = EarlyStopping(monitor='val_loss', patience=110, mode='auto',
-                   verbose=1,
-                   restore_best_weights=True)
-hist = model.fit(x_train, y_train, epochs=3, batch_size=128,
-                 validation_split=0.2,
-                 verbose=1,
-                 callbacks=[es])
-                   
-#4/ 평가 예측
-results = model.evaluate(x_test,y_test)
-print('results :', results )
+# convert labels to one-hot encoding
+y_train = to_categorical(y_train, num_classes=5)
+y_test = to_categorical(y_test, num_classes=5)
 
+# ...
+
+# convert predicted values to class labels
 y_predict = model.predict(x_test)
+y_predict = np.argmax(y_predict, axis=1) + 1 # add 1 to convert from zero-indexed to 1-indexed labels
 y_test_acc = np.argmax(y_test, axis=1)
 y_predict = np.argmax(y_predict, axis=1)
 

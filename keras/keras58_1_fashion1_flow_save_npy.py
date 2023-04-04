@@ -41,7 +41,7 @@ x_train = np.concatenate([x_train/255., x_augmented], axis=0)
 y_train = np.concatenate([y_train, y_augmented], axis=0)
 y_train = to_categorical(y_train)
 y_test = to_categorical(y_test)
-x_test = x_test/255.
+x_test = x_test/255.   #0-255 까지 데이터 나눈다
 
 path_save = 'd:/study_data/_save/fashion/'
 np.save(path_save + 'keras58_1_fashion_x_train.npy', arr=x_train)
