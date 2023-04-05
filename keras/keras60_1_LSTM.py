@@ -3,7 +3,7 @@ import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, Flatten, LSTM, Reshape
 from tensorflow.python.keras.callbacks import EarlyStopping
-
+#자연어 처리는 대부분 LSTM
 # 1 data
 docs = ['너므 제밋어요', '참 최고에요', '참 잘 만든 영화에요',
         '추천 하고 싶은 영화입니다', '한 번 더 보고 싶네요', '글쎄요',

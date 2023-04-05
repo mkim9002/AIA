@@ -16,7 +16,7 @@ test_data = test_data.drop(['out_pressure'],axis=1)
 # Preprocess data
 # ...
 def type_to_HP(type):
-    HP=[30,20,10,50,30,30,30,30]
+    HP=[40,30,20,60,30,30,30,30]
     gen=(HP[i] for i in type)
     return list(gen)
 train_data['type']=type_to_HP(train_data['type'])
@@ -39,5 +39,5 @@ predictions = model.predict(test_data)
 # Save predictions to submission file
 new_predictions = [0 if x == 1 else 1 for x in predictions]
 submission['label'] = pd.DataFrame({'Prediction': new_predictions})
-submission.to_csv(save_path+'kmg.csv', index=False)
+submission.to_csv(save_path+'kmg06.csv', index=False)
 

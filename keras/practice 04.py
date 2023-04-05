@@ -1,28 +1,27 @@
-# 1. 데이터
-path = 'd:/study_data/_data/gas/'  
-save_path = 'd:/study_data/_save/gas/'
+from tensorflow.keras.datasets import reuters
+import numpy as np
+import  pandas as pd
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense,Embedding, LSTM
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.utils import to_categorical
 
+#1. data
+(x_train, y_train),(x_test,y_test) = reuters.load_data(num_words=10000, test_split=0.2)
 
-train_csv = pd.read_csv(path + 'train_data.csv', 
-                        index_col=0) 
+print(x_train)
+print(y_train)
+print(x_train.shape, y_train.shape)
+print(x_test.shape, y_test.shape)
 
-test_csv = pd.read_csv(path + 'test_data.csv',
-                       index_col=0) 
+print(len(x_train[0]), len(x_train[1]),len(x_train[8981]))
+print("뉴스기사의 평균길이 :", max(len(i) for i in x_train))
+print("뉴스기사의 평균길이 :", sum(map(len,x_train))/ len(x_train))
 
+print(np.unique(y_train))
+print(np.unique(y_test))
+print(type(x_train), type(x_test))
 
-
-
-
-#submission.csv 만들기
-y_submit = model.predict(test_csv)
-submission = pd.read_csv(path + 'sample_submission.csv', index_col=0)
-# print(y_submit)
-# print(y_submit.shape)
-y_submit = np.argmax(y_submit, axis=1)
-print(y_submit.shape)
-y_submit += 3
-submission['quality'] = y_submit
-# print(submission)
-
-path_save = 'd:/study_data/_save/gas/' 
-submission.to_csv(path_save + 'gas_01.csv')
+y_train = to_categorical(y_train)
+y_test = to_categorical(y_test)
