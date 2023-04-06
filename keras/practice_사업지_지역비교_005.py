@@ -8,29 +8,42 @@ from tensorflow.keras.layers import LSTM, Dense
 path = './_data/개인프로젝트/관광 숙박 사업/'
 path_save = './_save/개인프로젝트/'
 
-df1 = pd.read_csv(path + '관광지출액.csv', encoding='CP949')
-df2 = pd.read_csv(path +'목적지검색건수.csv', encoding='CP949')
-df3 = pd.read_csv(path +'관광펜션업.csv', encoding='CP949',index_col=0)
-df4 = pd.read_csv(path +'방문자수.csv', encoding='CP949')
-
-
-print(df1)
-print(df2)
-print(df3)
-print(df4)
+df1 = pd.read_csv(path + '관광펜션업.csv', encoding='CP949')
+df2 = pd.read_csv(path +'전국관광지데이터.csv', encoding='CP949')
+# print(df1)
+# print(df2)
 
 # 결측치 처리
+df1 = df1.dropna(subset=['폐업일자', '소재지전화'], how='any')
+
+# 데이터가 저장된 CSV 파일을 불러옵니다.
+data = pd.read_csv(path +'관광펜션업.csv', encoding='cp949')
+
+# '소재지전체주소' 열에서 첫번째 단어만 추출하여 새로운 '지역' 열을 생성합니다.
+data['지역'] = data['소재지전체주소'].str.split().str.get(0)
+
+# '지역'과 '영업상태명' 열만 추출합니다.
+subset = data[['지역', '영업상태명']]
+
+# '지역'과 '영업상태명' 열의 조합별로 개수를 세어 데이터프레임으로 저장합니다.
+counts = pd.crosstab(subset['지역'], subset['영업상태명'])
+
+# 비율을 계산합니다.
+percentages = counts.apply(lambda x: x/x.sum(), axis=1)
+
+# 결과를 출력합니다.
+print(percentages)
+
 
 
 # 데이터 정규화
 scaler = MinMaxScaler()
 df1[['관광지출액']] = scaler.fit_transform(df1[['관광지출액']])
 df2[['검색량']] = scaler.fit_transform(df2[['검색량']])
-df3[['숙박시설수']] = scaler.fit_transform(df3[['숙박시설수']])
-df4[['방문자수']] = scaler.fit_transform(df4[['방문자수']])
+
 
 # 데이터 합치기
-df = pd.concat([df1['관광지출액'], df2['검색량'], df3['숙박시설수'], df4['방문자수']], axis=1)
+df = pd.concat([df1['관광지출액'], df2['검색량']], axis=1)
 
 # 학습 데이터 생성
 train = df.iloc[:-1,:]
