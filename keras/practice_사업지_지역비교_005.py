@@ -5,16 +5,22 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 
 # 데이터 불러오기
-df1 = pd.read_csv('관광지출액.csv', encoding='CP949')
-df2 = pd.read_csv('목적지검색건수.csv', encoding='CP949')
-df3 = pd.read_csv('관광펜션업.csv', encoding='CP949')
-df4 = pd.read_csv('방문자수.csv', encoding='CP949')
+path = './_data/개인프로젝트/관광 숙박 사업/'
+path_save = './_save/개인프로젝트/'
+
+df1 = pd.read_csv(path + '관광지출액.csv', encoding='CP949')
+df2 = pd.read_csv(path +'목적지검색건수.csv', encoding='CP949')
+df3 = pd.read_csv(path +'관광펜션업.csv', encoding='CP949',index_col=0)
+df4 = pd.read_csv(path +'방문자수.csv', encoding='CP949')
+
+
+print(df1)
+print(df2)
+print(df3)
+print(df4)
 
 # 결측치 처리
-df1 = df1.dropna()
-df2 = df2.dropna()
-df3 = df3.dropna()
-df4 = df4.dropna()
+
 
 # 데이터 정규화
 scaler = MinMaxScaler()
