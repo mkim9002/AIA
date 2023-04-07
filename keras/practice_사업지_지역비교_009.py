@@ -1,0 +1,91 @@
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+from keras.layers import Conv1D, MaxPooling1D, Flatten
+
+# 1. 데이터 불러오기
+path = './_data/개인프로젝트/관광 숙박 사업/'
+path_save = './_save/개인프로젝트/'
+
+df1 = pd.read_csv(path + '관광펜션업.csv', encoding='CP949')
+df2 = pd.read_csv(path + '전국관광지데이터.csv', encoding='CP949')
+
+# 2-1. 데이터 전처리
+# 지역명에서 첫번째 단어 추출
+df1['지역명'] = df1['지역명'].apply(lambda x: x.split()[0])
+
+# 영업상태구분코드 매핑
+# status_mapping = {'영업': 1, '휴업': 2, '폐업': 3, '취소': 4}
+# df1['영업상태구분코드'] = df1['영업상태구분코드'].map(status_mapping)
+status_mapping = {'영업': 1, '휴업': 2, '폐업': 3, '취소': 4}
+df1['영업상태구분코드'] = df1['영업상태구분코드'].dropna().map(status_mapping)
+
+
+# 결측치 처리
+df1 = df1.dropna(subset=['폐업일자', '소재지전화'], how='any')
+
+# 데이터프레임 합치기
+merged_data = pd.merge(df1, df2, how='inner', on='지역명')
+print(merged_data.info())
+print(merged_data.describe())
+
+# 2-2. 스케일링
+scaler = MinMaxScaler()
+scaled_data = scaler.fit_transform(merged_data[['검색건수', '방문자수', '관광지출액']].values)
+
+# 2-3. 시계열 데이터로 변환
+time_steps = 5
+X = []
+y = []
+for i in range(time_steps, len(scaled_data)):
+    X.append(scaled_data[i-time_steps:i])
+    y.append(merged_data.iloc[i]['영업상태구분코드'])
+X = np.array(X)
+y = np.array(y)
+
+# 3. 모델 구성
+model = Sequential()
+model.add(Conv1D(filters=64, kernel_size=3, activation='relu', input_shape=(X.shape[1], X.shape[2])))
+model.add(MaxPooling1D(pool_size=2))
+model.add(Flatten())
+model.add(Dense(50, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+
+# 4. 모델 컴파일
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# 5. 모델 학습
+model.fit(X, y, epochs=50, batch_size=64, verbose=1)
+
+# 6. 내년 각 지역별 도시별 영업율, 폐업율, 휴업율, 취소율 예측
+
+# 예측할 데이터 불러오기
+df_predict = pd.read_csv(path + 'predict_data.csv', encoding='CP949')
+
+# 지역명에서 첫번째 단어 추출
+df_predict['지역명'] = df_predict['지역명'].apply(lambda x: x.split()[0])
+
+# 스케일링
+scaled_data_predict = scaler.transform(df_predict[['검색건수', '방문자수', '관광지출액']].values)
+scaled_data_predict[np.isnan(scaled_data_predict)] = 0
+
+# 시계열 데이터로 변환
+X_predict = []
+for i in range(time_steps, len(scaled_data_predict)):
+    X_predict.append(scaled_data_predict[i-time_steps:i])
+X_predict = np.array(X_predict)
+
+# 예측
+y_predict = model.predict(X_predict)
+
+# 예측 결과 출력
+df_result = pd.DataFrame({
+    '지역명': df_predict['지역명'][time_steps:],
+    '영업상태구분코드 예측값': y_predict.flatten()
+})
+df_result['영업상태구분코드 예측값'] = df_result['영업상태구분코드 예측값'].apply(lambda x: round(x))
+df_result['영업상태구분'] = df_result['영업상태구분코드 예측값'].map({1: '영업', 2: '휴업', 3: '폐업', 4: '취소'})
+df_result.to_csv(path_save + '예측결과.csv', index=False, encoding='CP949')
+print(df_result.head())

@@ -5,7 +5,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from keras.layers import Conv1D, MaxPooling1D, Flatten
 
-# 데이터 불러오기
+#1.  데이터 불러오기
 path = './_data/개인프로젝트/관광 숙박 사업/'
 path_save = './_save/개인프로젝트/'
 

@@ -15,19 +15,20 @@ tourist_data = pd.read_csv(path +'전국관광지데이터.csv', encoding='CP949
 pension_data = pension_data.dropna(subset=['폐업일자', '소재지전화'], how='any')
 
 # '소재지전체주소' 열에서 시도명만 추출하여 새로운 '시도명' 열을 생성합니다.
-pension_data['시도명'] = pension_data['소재지전체주소'].str.split().str.get(0)
+pension_data['시도명'] = pension_data['지역명'].str.split().str.get(0)
 
 # '시도명'과 '영업상태명' 열만 추출합니다.
 pension_subset = pension_data[['시도명', '영업상태명']]
+print(pension_subset)
 
 # '시도명'과 '영업상태명' 열의 조합별로 개수를 세어 데이터프레임으로 저장합니다.
 pension_counts = pd.crosstab(pension_subset['시도명'], pension_subset['영업상태명'])
-
+print(pension_counts)
 # 비율을 계산합니다.
 pension_percentages = pension_counts.apply(lambda x: x/x.sum(), axis=1)
 
 # '시도명'을 기준으로 두 데이터를 병합합니다.
-merged_data = pd.merge(pension_data, tourist_data, how='inner', on='시도명')
+merged_data = pd.merge(pension_data, tourist_data, how='inner', on='지역명')
 
 # 결측치 처리
 merged_data = merged_data.dropna(subset=['방문자수', '검색건수'], how='any')
@@ -59,7 +60,7 @@ model.fit(x_train, y_train, epochs=100, batch_size=16)
 
 
 # 모델을 이용해 최적의 투자지역 도출
-X_test = np.array([X[-1]])
+X_test = np.array([X_test[-1]])
 X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
 predicted_value = model.predict(X_test)
 predicted_value = scaler.inverse_transform(predicted_value)

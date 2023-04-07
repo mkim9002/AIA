@@ -20,7 +20,7 @@ df1 = df1.dropna(subset=['폐업일자', '소재지전화'], how='any')
 data = pd.read_csv(path +'관광펜션업.csv', encoding='cp949')
 
 # '소재지전체주소' 열에서 첫번째 단어만 추출하여 새로운 '지역' 열을 생성합니다.
-data['지역'] = data['소재지전체주소'].str.split().str.get(0)
+data['지역명'] = data['소재지전체주소'].str.split().str.get(0)
 
 # '지역'과 '영업상태명' 열만 추출합니다.
 subset = data[['지역', '영업상태명']]
