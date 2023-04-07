@@ -19,12 +19,17 @@ df1['지역명'] = df1['지역명'].apply(lambda x: x.split()[0])
 # 영업상태구분코드 매핑
 # status_mapping = {'영업': 1, '휴업': 2, '폐업': 3, '취소': 4}
 # df1['영업상태구분코드'] = df1['영업상태구분코드'].map(status_mapping)
+# status_mapping = {'영업': 1, '휴업': 2, '폐업': 3, '취소': 4}
+# df1['영업상태구분코드'] = df1['영업상태구분코드'].dropna().map(status_mapping)
 status_mapping = {'영업': 1, '휴업': 2, '폐업': 3, '취소': 4}
-df1['영업상태구분코드'] = df1['영업상태구분코드'].dropna().map(status_mapping)
-
+df1['영업상태구분코드'] = df1['영업상태구분코드'].map(status_mapping).fillna(df1['영업상태구분코드'])
 
 # 결측치 처리
-df1 = df1.dropna(subset=['폐업일자', '소재지전화'], how='any')
+df1 = df1.dropna(subset=['폐업일자', '소재지전화','상세영업상태명'], how='any')
+
+print(df1)
+print(df1.info())
+
 
 # 데이터프레임 합치기
 merged_data = pd.merge(df1, df2, how='inner', on='지역명')
@@ -80,12 +85,4 @@ X_predict = np.array(X_predict)
 # 예측
 y_predict = model.predict(X_predict)
 
-# 예측 결과 출력
-df_result = pd.DataFrame({
-    '지역명': df_predict['지역명'][time_steps:],
-    '영업상태구분코드 예측값': y_predict.flatten()
-})
-df_result['영업상태구분코드 예측값'] = df_result['영업상태구분코드 예측값'].apply(lambda x: round(x))
-df_result['영업상태구분'] = df_result['영업상태구분코드 예측값'].map({1: '영업', 2: '휴업', 3: '폐업', 4: '취소'})
-df_result.to_csv(path_save + '예측결과.csv', index=False, encoding='CP949')
-print(df_result.head())
+print(y_predict)
