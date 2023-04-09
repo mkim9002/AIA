@@ -69,11 +69,11 @@ y_pred = np.round(y_pred_proba).astype(int)
 print(classification_report(y_test, y_pred))
 conf_mat = confusion_matrix(y_test, y_pred)
 plt.imshow(conf_mat, cmap='Blues', interpolation='nearest')
-plt.colorbar()ㄴ
+plt.colorbar()
 tick_marks = np.arange(len(set(y_test)))
-tick_labels = ['휴업', '영업', '폐업','취소ㄴㄴ']
-plt.xticks(tick_marks, tick_labels, rotation=45)
-plt.yticks(tick_marks, tick_labels)
+tick_labels = ['휴업', '영업', '폐업','취소']
+# plt.xticks(tick_marks, tick_labels, rotation=45)
+# plt.yticks(tick_marks, tick_labels)
 thresh = conf_mat.max() / 2.
 for i, j in itertools.product(range(conf_mat.shape[0]), range(conf_mat.shape[1])):
     plt.text(j, i, format(conf_mat[i, j], 'd'), horizontalalignment="center", color="white" if conf_mat[i, j] > thresh else "black")
