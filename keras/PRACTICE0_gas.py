@@ -1,81 +1,97 @@
-import numpy as np
-from tensorflow.keras.models import Sequential 
-from tensorflow.keras.layers import Dense 
-from sklearn.model_selection import train_test_split 
-from sklearn.metrics import r2_score, mean_squared_error, f1_score 
+from tensorflow.python.keras.models import Sequential, Model
+from tensorflow.python.keras.layers import Dense, Input, Dropout
 import pandas as pd
-from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler,	MinMaxScaler, MaxAbsScaler, 	RobustScaler
-import matplotlib.pyplot as plt
-from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
-from sklearn.datasets import make_blobs
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler, LabelEncoder
+from sklearn.model_selection import train_test_split
+from tensorflow.python.keras.callbacks import EarlyStopping
 
-# train 데이터 - 모두 정상
+# 1. 데이터
+# 1.1 경로, 가져오기
+path = './_data/kaggle_house/'
+path_save = './_save/kaggle_house/'
+
+train_csv = pd.read_csv(path + 'train.csv', index_col=0)
+test_csv = pd.read_csv(path + 'test.csv', index_col=0)
+
+# 1.2 확인사항
+print(train_csv.shape, test_csv.shape) #(1460, 80) (1459, 79)
+print(train_csv.columns, test_csv.columns) #Index(['MSSubClass', 'MSZoning', 'LotFrontage', 'LotArea',
+
+# 1.3 결측지
+print(train_csv.isnull().sum()) #LotFrontage      259
+
+# 1.4 라벨인코딩( object 에서 )
+le=LabelEncoder()
+for i in train_csv.columns:
+    if train_csv[i].dtype=='object':
+        train_csv[i] = le.fit_transform(train_csv[i])
+        test_csv[i] = le.fit_transform(test_csv[i])
+print(len(train_csv.columns))
+print(train_csv.info())
+train_csv=train_csv.dropna()
+print(train_csv.shape)
 
 
-#1. 데이터
+# 1.5 x, y 분리
+x = train_csv.drop(['SalePrice'], axis=1)
+y = train_csv['SalePrice']
 
-path = "d:/study_data/_data/gas/"
-path_save = "d:/study_data/_save/gas/"
+print(x.shape) #(1121, 80)
 
-train_csv=pd.read_csv(path + 'train_data.csv',index_col=0)
-print(train_csv)
-print(train_csv.shape) #(2463, 7)
+# 1.6 train, test 분리
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, random_state=123, shuffle=True)
 
-test_csv=pd.read_csv(path + 'test_data.csv',index_col=0)
-print(test_csv) 
-print(test_csv.shape) #(7389, 7)
+# 1.7 Scaler
+scaler = MinMaxScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+test_csv = scaler.transform(test_csv)
 
-#===================================================================================================================
-print(train_csv.columns)
-# Index(['air_end_temp', 'out_pressure', 'motor_current', 'motor_rpm',
-#        'motor_temp', 'motor_vibe', 'type'],
-#       dtype='object')
-print('train_csv.describe() : ',train_csv.describe())
-print('type(train_csv) : ',type(train_csv)) # <class 'pandas.core.frame.DataFrame'>
+# 2. 모델구성
+model = Sequential()
+model.add(Dense(99, input_dim=79))
+model.add(Dense(84))
+model.add(Dense(64))
+model.add(Dense(32))
+model.add(Dense(8))
+model.add(Dense(1))
 
-####################################### 결측치 처리 #######################################  
-print('결측치 숫자 : ',train_csv.isnull().sum())  # 없음
-#####################train_csv 데이터에서 x와 y를 분리#######################
-print('test_csv[type]의 라벨 값 :',np.unique(test_csv['type'])) #[0 1 2 3 4 5 6 7]
+# input1 = Input(shape=(79,))
+# dense1 = Dense(32)(input1)
+# drop1 = Dropout(0.2)(dense1)
+# dense2 = Dense(64, activation='relu')(drop1)
+# dense3 = Dense(64)(dense2)
+# dense4 = Dense(32)(dense3)
+# dense5 = Dense(8)(dense4)
+# output1 = Dense(1)(dense5)
+# model = Model(inputs=input1, outputs=output1)
 
-x = train_csv.copy()
-scaler = StandardScaler()
-x = scaler.fit_transform(x)
+# 3. 컴파일, 훈련
+model.compile(loss='mse', optimizer='adam', metrics=['acc'])
+es = EarlyStopping(monitor='val_loss', patience=150, verbose=1, mode='min', restore_best_weights=True)
+hist = model.fit(x_train, y_train, epochs=150, batch_size=99, verbose=1, validation_split=0.2, callbacks=[es])
 
-pca = PCA(n_components=2)
-pca_x = pca.fit_transform(x)
+# 4. 평가, 예측
+loss = model.evaluate(x_test, y_test)
+print('loss : ', loss)
 
-kmeans = KMeans(n_clusters=3)
-kmeans.fit(pca_x)
+y_predict = model.predict(x_test)
 
-centers = kmeans.cluster_centers_
+from sklearn.metrics import r2_score
+r2 = r2_score(y_test, y_predict)
+print('r2 : ', r2)
 
-fig, ax = plt.subplots(figsize=(10, 6))
-for i in range(3):
-    ax.scatter(pca_x[kmeans.labels_ == i, 0], pca_x[kmeans.labels_ == i, 1], label=f"Cluster {i+1}")
-ax.scatter(centers[:, 0], centers[:, 1], s=100, c='black', label='Centroids')
-ax.set_title('KMeans Clustering')
-ax.legend()
-plt.show()
+# 4.1 내보내기
+import datetime
+date = datetime.datetime.now()
+date = date.strftime('%m%d_%H%M%S')
 
-train_clusters = kmeans.labels_
-print(train_clusters)
-
-train_csv['cluster'] = train_clusters
-print(train_csv)
-
-# test 데이터 전처리 과정 (생략)
-test_x = scaler.transform(test_csv)
-test_pca_x = pca.transform(test_x)
-test_clusters = kmeans.predict(test_pca_x)
-
-# macro f1 score 계산
-macro_f1_score = f1_score(test_csv['type'], test_clusters, average='macro')
-print("macro f1 score: ", macro_f1_score)
-
-submission = pd.read_csv(path +'answer_sample.csv',index_col='type') # index_col을 'type'으로 변경
-submission['label'] = test_clusters
-submission.to_csv(path_save+'submit_03.csv')
+y_submit = model.predict(test_csv)
+import numpy as np
+import pandas as pd
+y_submit = pd.DataFrame(y_submit)
+y_submit = y_submit.fillna(0)
+y_submit = np.array(y_submit)
+submission = pd.read_csv(path + 'sample_submission.csv', index_col=0)
+submission['SalePrice'] = y_submit
+submission.to_csv(path_save + 'kaggle_house_' + date + '.csv')

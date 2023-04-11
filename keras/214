@@ -1,13 +1,9 @@
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from keras.layers import Conv1D, MaxPooling1D, Flatten
-from sklearn.metrics import classification_report, confusion_matrix
-import itertools
-import matplotlib.pyplot as plt
 
 # 1. 데이터 불러오기
 path = './_data/개인프로젝트/'
@@ -19,14 +15,26 @@ df2 = pd.read_csv(path + '전국관광지데이터.csv', encoding='CP949')
 # 2-1. 데이터 전처리
 # 지역명에서 첫번째 단어 추출
 df1['지역명'] = df1['지역명'].apply(lambda x: x.split()[0])
+
+# 영업상태구분코드 매핑
+# status_mapping = {'영업': 1, '휴업': 2, '폐업': 3, '취소': 4}
+# df1['영업상태구분코드'] = df1['영업상태구분코드'].map(status_mapping)
+# status_mapping = {'영업': 1, '휴업': 2, '폐업': 3, '취소': 4}
+# df1['영업상태구분코드'] = df1['영업상태구분코드'].dropna().map(status_mapping)
 status_mapping = {'영업': 1, '휴업': 0.5, '폐업': 0, '취소': 0}
 df1['영업상태구분코드'] = df1['영업상태구분코드'].map(status_mapping).fillna(df1['영업상태구분코드'])
-
+print(df1)
 # 결측치 처리
 df1 = df1.dropna(subset=['폐업일자', '소재지전화','상세영업상태명'], how='any')
 
+print(df1)
+print(df1.info())
+
+
 # 데이터프레임 합치기
 merged_data = pd.merge(df1, df2, how='inner', on='지역명')
+print(merged_data.info())
+print(merged_data.describe())
 
 # 2-2. 스케일링
 scaler = MinMaxScaler()
@@ -36,14 +44,12 @@ scaled_data = scaler.fit_transform(merged_data[['검색건수', '방문자수', 
 time_steps = 5
 X = []
 y = []
-for i in range(time_steps, len(scaled_data)):
+for i in range(time_steps, len(scaled_data)):   #'검색건수', '방문자수', '관광지출액'
     X.append(scaled_data[i-time_steps:i])
     y.append(merged_data.iloc[i]['영업상태구분코드'])
 X = np.array(X)
 y = np.array(y)
 
-# 2-4. Train-Test set 분리
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # 3. 모델 구성
 model = Sequential()
@@ -51,35 +57,36 @@ model.add(Conv1D(filters=64, kernel_size=3, activation='relu', input_shape=(X.sh
 model.add(MaxPooling1D(pool_size=2))
 model.add(Flatten())
 model.add(Dense(50, activation='relu'))
-model.add(Dense(1, activation='sigmoid'))
+model.add(Dense(13, activation='softmax'))
 
 # 4. 모델 컴파일
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # 5. 모델 학습
-model.fit(X_train, y_train, epochs=50, batch_size=64, verbose=1)
+model.fit(X, y, epochs=50, batch_size=64, verbose=1)
 
-# 7. 모델 평가
-loss, accuracy = model.evaluate(X_test, y_test, verbose=1)
-print('Accuracy: {:.2f}%'.format(accuracy*100))
+# 6. 내년 각 지역별 도시별 영업율, 폐업율, 휴업율, 취소율 예측
 
-# 8. 예측 결과 분석
-y_pred_proba = model.predict(X_test)
-y_pred = np.round(y_pred_proba).astype(int)
-print(classification_report(y_test, y_pred))
-conf_mat = confusion_matrix(y_test, y_pred)
-plt.imshow(conf_mat, cmap='Blues', interpolation='nearest')
-plt.colorbar()
-tick_marks = np.arange(len(set(y_test)))
-tick_labels = ['휴업', '영업', '폐업','취소']
-# plt.xticks(tick_marks, tick_labels, rotation=45)
-# plt.yticks(tick_marks, tick_labels)
-thresh = conf_mat.max() / 2.
-for i, j in itertools.product(range(conf_mat.shape[0]), range(conf_mat.shape[1])):
-    plt.text(j, i, format(conf_mat[i, j], 'd'), horizontalalignment="center", color="white" if conf_mat[i, j] > thresh else "black")
-plt.tight_layout()
-plt.xlabel('Predicted Label')
-plt.ylabel('True Label')
-plt.show()
+# 예측할 데이터 불러오기
+df_predict = pd.read_csv(path + 'predict_data.csv', encoding='CP949')
 
+# 지역명에서 첫번째 단어 추출
+df_predict['지역명'] = df_predict['지역명'].apply(lambda x: x.split()[0])
 
+# 스케일링
+scaled_data_predict = scaler.transform(df_predict[['검색건수', '방문자수', '관광지출액']].values)
+scaled_data_predict[np.isnan(scaled_data_predict)] = 0
+
+# 시계열 데이터로 변환
+X_predict = []
+for i in range(time_steps, len(scaled_data_predict)):
+    X_predict.append(scaled_data_predict[i-time_steps:i])
+X_predict = np.array(X_predict)
+
+# 예측
+y_predict = model.predict(X_predict)
+
+print(y_predict)
+
+#
+# [0.99883294]]
