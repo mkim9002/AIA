@@ -72,5 +72,5 @@ for i in range(len(predicted_value)):
     max_index = np.where(predicted_value[i] == max_value)
     result.append(max_index[0][0])
     
-invest_region = list(le.inverse_transform(result))
-print('최적의 투자지역:', invest_region)
+# invest_region = list(le.inverse_transform(result))
+# print('최적의 투자지역:', invest_region)
