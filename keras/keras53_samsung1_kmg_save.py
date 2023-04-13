@@ -128,7 +128,7 @@ model.compile(loss='mse', optimizer='adam')
 es = EarlyStopping(monitor='val_loss', mode='min', patience=300, restore_best_weights=True)
 hist = model.fit([samsung_x_train_split, hyundai_x_train_split], 
                  [samsung_y_train_split, hyundai_y_train_split], 
-                 epochs=1080, batch_size=128, validation_split=0.02, callbacks=[es])
+                 epochs=1000, batch_size=128, validation_split=0.02, callbacks=[es])
 
 model.save(path_save + 'keras53_samsung2_kmg.h5')
 

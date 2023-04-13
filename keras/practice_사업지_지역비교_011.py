@@ -40,6 +40,7 @@ total_rev_21 = df2_21['2021관광지출액'].sum()
 total_rev_22 = df2_22['2022관광지출액'].sum()
 rev_increase = round((total_rev_22 - total_rev_21) / total_rev_21 * 100, 2)
 
+
 # 2021, 2022 검색건수 합계 계산 및 증가율 계산
 total_search_21 = df2_21['2021검색건수'].sum()
 total_search_22 = df2_22['2022검색건수'].sum()
@@ -51,9 +52,9 @@ total_visit_22 = df2_22['2022방문자수'].sum()
 visit_increase = round((total_visit_22 - total_visit_21) / total_visit_21 * 100, 2)
 
 # 결과 출력
-# print('2021-2022 관광지 출액 증가율: {}%'.format(rev_increase))
-# print('2021-2022 검색건수 증가율: {}%'.format(search_increase))
-# print('2021-2022 방문자수 증가율: {}%'.format(visit_increase))
+print('2021-2022 관광지 출액 증가율: {}%'.format(rev_increase))
+print('2021-2022 검색건수 증가율: {}%'.format(search_increase))
+print('2021-2022 방문자수 증가율: {}%'.format(visit_increase))
 
 # 데이터 범위
 # 데이터 범위
