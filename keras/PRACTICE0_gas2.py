@@ -34,11 +34,11 @@ X_train = scaler.fit_transform(X_train)
 X_val = scaler.transform(X_val)
 
 # Apply Local Outlier Factor
-lof = LocalOutlierFactor(n_neighbors=20, contamination=0.1)
+lof = LocalOutlierFactor(n_neighbors=21, contamination=0.1)
 y_pred_train = lof.fit_predict(X_train)
 
 # Tuning: Adjust the n_neighbors and contamination parameters
-lof_tuned = LocalOutlierFactor(n_neighbors=25, contamination=0.05)
+lof_tuned = LocalOutlierFactor(n_neighbors=21, contamination=0.06)
 y_pred_train_tuned = lof_tuned.fit_predict(X_train)
 
 # Predict anomalies in test data using tuned LOF
@@ -52,4 +52,4 @@ print(submission.value_counts())
 date = datetime.datetime.now()
 date = date.strftime("%m%d_%H%M")
 
-submission.to_csv(save_path + date + 'sub02.csv', index=False)
+submission.to_csv(save_path + date + 'sub05.csv', index=False)

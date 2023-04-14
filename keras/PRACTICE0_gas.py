@@ -70,4 +70,4 @@ submission['label'] = pd.DataFrame({'Prediction': final_predictions})
 import datetime 
 date = datetime.datetime.now()  
 date = date.strftime("%m%d_%H%M")
-submission.to_csv(save_path + date + 'submit.csv', index=False)
+submission.to_csv(save_path + date + 'submit04.csv', index=False)
