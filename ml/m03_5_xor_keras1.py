@@ -14,7 +14,7 @@ y_data = [0, 1, 1, 0]
 model = Sequential()
 model.add(Dense(1, input_dim=2, activation='sigmoid'))
 
-# 3. 훈련
+# # 3. 훈련
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
 model.fit(x_data, y_data, epochs=100, batch_size=1)
 

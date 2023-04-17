@@ -13,7 +13,7 @@ submission = pd.read_csv(path+'answer_sample.csv')
 
 # Preprocess data
 def type_to_HP(type):
-    HP=[30,20,10,50,30,30,30,30]
+    HP=[90,90,90,90,90,90,90,90]
     gen=(HP[i] for i in type)
     return list(gen)
 train_data['type']=type_to_HP(train_data['type'])
@@ -26,7 +26,7 @@ features = ['air_inflow','air_end_temp','motor_current','motor_rpm','motor_temp'
 X = train_data[features]
 
 # Split data into train and validation sets
-X_train, X_val = train_test_split(X, train_size= 0.9, random_state= 9821)
+X_train, X_val = train_test_split(X, train_size= 0.5, random_state= 382)
 
 # Normalize data
 scaler = MinMaxScaler()
@@ -34,7 +34,7 @@ X_train = scaler.fit_transform(X_train)
 X_val = scaler.transform(X_val)
 
 # Apply Local Outlier Factor
-lof = LocalOutlierFactor(n_neighbors=21, contamination=0.1)
+lof = LocalOutlierFactor(n_neighbors=25, contamination=0.3)
 y_pred_train = lof.fit_predict(X_train)
 
 # Tuning: Adjust the n_neighbors and contamination parameters
@@ -52,4 +52,4 @@ print(submission.value_counts())
 date = datetime.datetime.now()
 date = date.strftime("%m%d_%H%M")
 
-submission.to_csv(save_path + date + 'sub05.csv', index=False)
+submission.to_csv(save_path + date + 'sub11.csv', index=False)

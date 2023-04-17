@@ -128,7 +128,7 @@ model.compile(loss='mse', optimizer='adam')
 es = EarlyStopping(monitor='val_loss', mode='min', patience=300, restore_best_weights=True)
 hist = model.fit([검색수_x_train_split, 방문자수_x_train_split], 
                  [검색수_y_train_split, 방문자수_y_train_split], 
-                 epochs=1000, batch_size=128, validation_split=0.02, callbacks=[es])
+                 epochs=3000, batch_size=128, validation_split=0.02, callbacks=[es])
 
 model.save(path_save + '방문수.h5')
 

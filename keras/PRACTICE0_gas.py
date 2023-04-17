@@ -21,7 +21,7 @@ data = pd.concat([train_data, test_data], axis=0)
 
 # Preprocess data
 def type_to_HP(type):
-    HP=[30,20,10,50,30,30,30,30]
+    HP=[60,60,60,60,60,60,60,60]
     gen=(HP[i] for i in type)
     return list(gen)
 train_data['type'] = type_to_HP(train_data['type'])
@@ -70,4 +70,4 @@ submission['label'] = pd.DataFrame({'Prediction': final_predictions})
 import datetime 
 date = datetime.datetime.now()  
 date = date.strftime("%m%d_%H%M")
-submission.to_csv(save_path + date + 'submit04.csv', index=False)
+submission.to_csv(save_path + date + 'submit12.csv', index=False)

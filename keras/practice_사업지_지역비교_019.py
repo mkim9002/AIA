@@ -25,10 +25,10 @@ datasets_방문자수 = pd.read_csv(path + '한국관광공사-방문자수.csv'
 방문자수_y = np.array(datasets_방문자수['제주특별자치도'])
 
 # 1.2.2 범위 선택
-검색수_x = 검색수_x[:18, :]
-검색수_y = 검색수_y[:18]
-방문자수_x = 방문자수_x[:18, :]
-방문자수_y = 방문자수_y[:18]
+검색수_x = 검색수_x[:117, :]
+검색수_y = 검색수_y[:117]
+방문자수_x = 방문자수_x[:117, :]
+방문자수_y = 방문자수_y[:117]
 
 #1.2.3 np.flip으로 전체 순서 반전
 검색수_x = np.flip(검색수_x, axis=1)
@@ -92,6 +92,7 @@ dense2 = Dense(90, activation='relu', name='ss2')(dense1)
 dense3 = Dense(80, activation='relu', name='ss3')(dense2)
 output1 = Dense(70, activation='relu', name='ss4')(dense3)
 
+
 # 2.2 모델2
 input2 = Input(shape=(timesteps, 17))
 dense11 = LSTM(100, name='hd1')(input2)
@@ -119,13 +120,13 @@ model.summary()
 
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
-es = EarlyStopping(monitor='val_loss', mode='min', patience=300, restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', patience=50, restore_best_weights=True)
 hist = model.fit([검색수_x_train_split, 방문자수_x_train_split], 
                  [검색수_y_train_split, 방문자수_y_train_split], 
-                 epochs=1000, batch_size=128, validation_split=0.02, callbacks=[es])
+                 epochs=1000, batch_size=128, validation_split=0.3, callbacks=[es])
 
 model.save(path_save + '방문수.h5')
-
+55
 # 4. 평가, 예측
 
 loss = model.evaluate([검색수_x_test_split, 방문자수_x_test_split], [검색수_y_test_split, 방문자수_y_test_split])
