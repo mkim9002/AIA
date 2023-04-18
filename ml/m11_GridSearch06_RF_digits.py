@@ -10,23 +10,22 @@
 ####################################################
 import time
 import numpy as np
-from sklearn.datasets import load_iris, fetch_california_housing
+from sklearn.datasets import load_iris, load_digits
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold, cross_val_score, StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from sklearn.model_selection import GridSearchCV,RandomizedSearchCV   
-from sklearn.metrics import accuracy_score, r2_score
+from sklearn.model_selection import GridSearchCV   
+from sklearn.metrics import accuracy_score
 
 #1. 데이터 
-x, y = fetch_california_housing(return_X_y=True)
+x, y = load_digits(return_X_y=True)
 
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, shuffle=True, random_state=42, test_size=0.2
 )
 
 n_splits = 5
-kfold = KFold(n_splits=n_splits, shuffle=True, random_state=337)
-# kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=337)
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=337)
 
 
 parameters = [
@@ -37,7 +36,7 @@ parameters = [
   ]
 
 #2. 모델 
-model = RandomizedSearchCV(RandomForestRegressor(), parameters,
+model = GridSearchCV(RandomForestClassifier(), parameters,
                      cv=kfold, verbose=1, refit=True, n_jobs=-1)
 
 #3. 컴파일, 훈련 
@@ -53,29 +52,19 @@ print("걸린시간 :", round(end_time-start_time,2), "초")
 
 #4. 평가, 예측
 y_predict = model.predict(x_test)
-print("r2_score:", r2_score(y_test, y_predict))
+print("accuracy_score:", accuracy_score(y_test, y_predict))
 
 y_pred_best = model.best_estimator_.predict(x_test)            
-print("최적 튠 r2:", r2_score(y_test, y_pred_best))
+print("최적 튠 ACC:", accuracy_score(y_test, y_pred_best))
+
 
 '''
-Fitting 5 folds for each of 10 candidates, totalling 50 fits
-최적의 매개변수: RandomForestRegressor()
-최적의 파라미터: {'min_samples_split': 2}
-best_score: 0.8060023102907883
-model.score: 0.8057967818003352
-걸린시간 : 99.58 초
-r2_score: 0.8057967818003352
-최적 튠 r2: 0.8057967818003352
-'''
-#
-'''
-Fitting 5 folds for each of 30 candidates, totalling 150 fits
-최적의 매개변수: RandomForestRegressor(n_estimators=200)
-최적의 파라미터: {'n_estimators': 200}
-best_score: 0.8074782265030211
-model.score: 0.8075162283132415
-걸린시간 : 272.99 초
-r2_score: 0.8075162283132415
-최적 튠 r2: 0.8075162283132415
+Fitting 5 folds for each of 68 candidates, totalling 340 fits
+최적의 매개변수: RandomForestClassifier(max_depth=12, min_samples_leaf=3, n_estimators=200)
+최적의 파라미터: {'max_depth': 12, 'min_samples_leaf': 3, 'n_estimators': 200}
+best_score: 0.9728513356562137
+model.score: 0.9666666666666667
+걸린시간 : 29.26 초
+accuracy_score: 0.9666666666666667
+최적 튠 ACC: 0.9666666666666667
 '''

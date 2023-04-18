@@ -10,29 +10,15 @@
 ####################################################
 import time
 import numpy as np
-import pandas as pd
 from sklearn.datasets import load_iris, fetch_california_housing
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold, cross_val_score, StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from sklearn.model_selection import GridSearchCV, RandomizedSearchCV   
+from sklearn.model_selection import GridSearchCV   
 from sklearn.metrics import accuracy_score, r2_score
 
-#1. 데이터
-path = './_data/kaggle_bike/'
-path_save = './_save/kaggle_bike/'
-
-train_csv = pd.read_csv(path + 'train.csv', index_col=0)
-test_csv = pd.read_csv(path + 'test.csv', index_col=0)
-
-###결측치제거### 
-# print(train_csv.isnull().sum()) 
-#결측치 없음
-
-###데이터분리(train_set)###
-x = train_csv.drop(['casual', 'registered', 'count'], axis=1)
-y = train_csv['count']
-
+#1. 데이터 
+x, y = fetch_california_housing(return_X_y=True)
 
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, shuffle=True, random_state=42, test_size=0.2
@@ -51,7 +37,7 @@ parameters = [
   ]
 
 #2. 모델 
-model = RandomizedSearchCV(RandomForestRegressor(), parameters,
+model = GridSearchCV(RandomForestRegressor(), parameters,
                      cv=kfold, verbose=1, refit=True, n_jobs=-1)
 
 #3. 컴파일, 훈련 
@@ -73,23 +59,12 @@ y_pred_best = model.best_estimator_.predict(x_test)
 print("최적 튠 r2:", r2_score(y_test, y_pred_best))
 
 '''
-Fitting 5 folds for each of 10 candidates, totalling 50 fits
-최적의 매개변수: RandomForestRegressor(max_depth=10, min_samples_leaf=3)
-최적의 파라미터: {'n_estimators': 100, 'min_samples_leaf': 3, 'max_depth': 10}
-best_score: 0.3505597557437688
-model.score: 0.3698332799333316
-걸린시간 : 17.89 초
-r2_score: 0.3698332799333316
-최적 튠 r2: 0.3698332799333316
-'''
-#
-'''
 Fitting 5 folds for each of 30 candidates, totalling 150 fits
-최적의 매개변수: RandomForestRegressor(max_depth=10)
-최적의 파라미터: {'max_depth': 10}
-best_score: 0.35059194460571
-model.score: 0.37125646931958367
-걸린시간 : 96.35 초
-r2_score: 0.37125646931958367
-최적 튠 r2: 0.37125646931958367
+최적의 매개변수: RandomForestRegressor(n_estimators=200)
+최적의 파라미터: {'n_estimators': 200}
+best_score: 0.8074782265030211
+model.score: 0.8075162283132415
+걸린시간 : 272.99 초
+r2_score: 0.8075162283132415
+최적 튠 r2: 0.8075162283132415
 '''
