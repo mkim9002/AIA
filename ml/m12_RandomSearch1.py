@@ -39,6 +39,7 @@ model = RandomizedSearchCV(SVC(),parameters,
                      verbose=1,
                      refit=True,    #디폴트, flase 하게되면 
                     #  refit=False,
+                    n_iter=10,
                      n_jobs=1)
 
 #3. 컴파일 훈련
