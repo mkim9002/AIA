@@ -35,18 +35,18 @@ print("accuracy_score:", acc)
 print(model, ":", model.feature_importances_)
 
 
-#그림그리기
-# import matplotlib.pyplot as plt
+# 그림그리기
+import matplotlib.pyplot as plt
 
-# def plot_feature_importances(model):
-#     n_features = datasets.data.shape[1]
-#     plt.barh(np.arange(n_features), model.feature_importances_, align='center')
-#     plt.yticks(np.arange(n_features), datasets.feature_names)
-#     plt.xlabel('Feature Importances')
-#     plt.ylabel('Features')
-#     plt.ylim(-1, n_features)
-#     plt.title(model)
+def plot_feature_importances(model):
+    n_features = datasets.data.shape[1]
+    plt.barh(np.arange(n_features), model.feature_importances_, align='center')
+    plt.yticks(np.arange(n_features), datasets.feature_names)
+    plt.xlabel('Feature Importances')
+    plt.ylabel('Features')
+    plt.ylim(-1, n_features)
+    plt.title(model)
 
-# plot_feature_importances(model)
-# plt.show()
+plot_feature_importances(model)
+plt.show()
 
