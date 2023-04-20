@@ -52,7 +52,11 @@ print(submission.value_counts())
 date = datetime.datetime.now()
 date = date.strftime("%m%d_%H%M")
 
+<<<<<<< HEAD
 submission.to_csv(save_path + date + 'submission.csv', index=False)
 
 
 #213
+=======
+submission.to_csv(save_path + date + 'submission.csv', index=False)
+>>>>>>> 20c57349bd8b1ddf8594f51ddc7c697862c87ca5
