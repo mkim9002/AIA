@@ -3,7 +3,7 @@ import datetime
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.neighbors import LocalOutlierFactor
-#23213
+
 # 훈련 데이터 및 테스트 데이터 로드
 path='d:/study_data/_data/gas/'
 save_path= 'd:/study_data/_save/gas/'
