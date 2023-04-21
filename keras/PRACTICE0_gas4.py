@@ -26,7 +26,7 @@ features = ['air_inflow', 'air_end_temp', 'out_pressure', 'motor_current', 'moto
 X = train_data[features]
 
 # Split data into train and validation sets
-X_train, X_val = train_test_split(X, train_size= 0.89, random_state=1)
+X_train, X_val = train_test_split(X, train_size= 0.9999999999, random_state=1)
 
 # Normalize data
 scaler = MinMaxScaler()
@@ -34,7 +34,7 @@ X_train = scaler.fit_transform(X_train)
 X_val = scaler.transform(X_val)
 
 # Apply Local Outlier Factor
-lof = LocalOutlierFactor(n_neighbors=23, contamination=0.1)
+lof = LocalOutlierFactor(n_neighbors=29, contamination=0.3)
 y_pred_train = lof.fit_predict(X_train)
 
 # Tuning: Adjust the n_neighbors and contamination parameters
@@ -61,3 +61,7 @@ plt.figure(figsize=(10, 8 ))
 sns.set(font_scale=1.2)
 sns.heatmap(train_data.corr(),square=True, annot=True, cbar=True)
 plt.show()
+
+import calendar
+print(calendar.calendar(2023))
+calendar.prmonth(2023,4)
