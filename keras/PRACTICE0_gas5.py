@@ -1,10 +1,11 @@
 import pandas as pd
 import datetime
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, MaxAbsScaler, Normalizer
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.neighbors import LocalOutlierFactor
+from sklearn.metrics import roc_auc_score
 
-# 훈련 데이터 및 테스트 데이터 로드
+# Load data
 path = 'd:/study_data/_data/gas/'
 save_path = 'd:/study_data/_save/gas/'
 train_data = pd.read_csv(path+'train_data.csv')
@@ -13,7 +14,7 @@ submission = pd.read_csv(path+'answer_sample.csv')
 
 # Preprocess data
 def type_to_HP(type):
-    HP=[30,20,10,50,30,30,30,30]
+    HP=[29,21,9,51,29,31,29,31]
     gen=(HP[i] for i in type)
     return list(gen)
 train_data['type']=type_to_HP(train_data['type'])
@@ -22,10 +23,8 @@ test_data['type']=type_to_HP(test_data['type'])
 # Select subset of features for LOF model
 features = ['air_inflow', 'air_end_temp', 'out_pressure', 'motor_current', 'motor_rpm', 'motor_temp', 'motor_vibe']
 
-# Prepare train and test data
+# Prepare train and validation data
 X = train_data[features]
-
-# Split data into train and validation sets
 X_train, X_val = train_test_split(X, train_size= 0.89, random_state=1)
 
 # Normalize data
@@ -33,27 +32,38 @@ scaler = MinMaxScaler()
 X_train = scaler.fit_transform(X_train)
 X_val = scaler.transform(X_val)
 
-# Apply Local Outlier Factor
-lof = LocalOutlierFactor(n_neighbors=23, contamination=0.1)
-y_pred_train = lof.fit_predict(X_train)
+# Define parameter grid for GridSearchCV
+param_grid = {'n_neighbors': [21, 25, 29, 33],
+              'contamination': [0.05, 0.07, 0.09]}
 
-# Tuning: Adjust the n_neighbors and contamination parameters
-lof_tuned = LocalOutlierFactor(n_neighbors=35, contamination=0.047)
-y_pred_train_tuned = lof_tuned.fit_predict(X_train)
+# Define custom scoring function
+def lof_auc_score(estimator, X):
+    y_pred = estimator.fit_predict(X)
+    return roc_auc_score(y_true=[1 if x == 1 else 0 for x in y_pred],
+                         y_score=-estimator.negative_outlier_factor_)
 
-# Predict anomalies in test data using tuned LOF
+# Apply GridSearchCV to tune hyperparameters
+lof = LocalOutlierFactor()
+grid_search = GridSearchCV(lof, param_grid=param_grid, scoring=lof_auc_score, cv=5)
+grid_search.fit(X_train)
+
+# Print best hyperparameters
+print("Best hyperparameters:", grid_search.best_params_)
+
+# Use best hyperparameters to predict anomalies in test data
+lof_tuned = LocalOutlierFactor(n_neighbors=grid_search.best_params_['n_neighbors'],
+                               contamination=grid_search.best_params_['contamination'])
 test_data_lof = scaler.transform(test_data[features])
 y_pred_test_lof = lof_tuned.fit_predict(test_data_lof)
 lof_predictions = [1 if x == -1 else 0 for x in y_pred_test_lof]
 
-submission['label'] = pd.DataFrame({'Prediction': lof_predictions})
-print(submission.value_counts())
 #time
 date = datetime.datetime.now()
 date = date.strftime("%m%d_%H%M")
 
 submission.to_csv(save_path + date + 'submission.csv', index=False)
 
+# Plot correlation matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
 print(test_data.corr())
