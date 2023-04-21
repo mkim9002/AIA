@@ -13,7 +13,7 @@ submission = pd.read_csv(path+'answer_sample.csv')
 
 # Preprocess data
 def type_to_HP(type):
-    HP=[30,20,10,50,30,30,30,30]
+    HP=[1,2,3,4,5,6,7,8,9]
     gen=(HP[i] for i in type)
     return list(gen)
 train_data['type']=type_to_HP(train_data['type'])
@@ -26,7 +26,7 @@ features = ['air_inflow', 'air_end_temp', 'out_pressure', 'motor_current', 'moto
 X = train_data[features]
 
 # Split data into train and validation sets
-X_train, X_val = train_test_split(X, train_size= 0.9999993459999, random_state=174)
+X_train, X_val = train_test_split(X, train_size= 0.9999993459999, random_state=173634564)
 
 # Normalize data
 scaler = MinMaxScaler()
