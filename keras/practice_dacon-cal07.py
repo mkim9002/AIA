@@ -27,7 +27,7 @@ X_train = pd.get_dummies(X_train, columns=['Weight_Status', 'Gender'])
 X_test = pd.get_dummies(X_test, columns=['Weight_Status', 'Gender'])
 
 # Train the model
-model = HalvingGridSearchCV()
+model = GaussianProcessRegressor()
 model.fit(X_train, y_train)
 
 # Predict on training data and calculate RMSE
@@ -45,6 +45,8 @@ submission.to_csv(save_path + date + 'submission.csv', index=False)
 #model = DecisionTreeRegressor() : RMSE on training data: 0.0  FILE:0421_1624submission.csv
 #model = LinearSVC() RMSE on training data: 126.34649553245762
 #model = GaussianProcessRegressor() :RMSE on training data: 1.0738634648339645e-08  FILE:0421_1639submission.csv
+
+####################
 
 
 
