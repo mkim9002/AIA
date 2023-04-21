@@ -1,28 +1,22 @@
+from sklearn.utils import all_estimators
+from sklearn.datasets import load_iris, load_breast_cancer, load_digits, load_wine, fetch_california_housing, load_diabetes
 import numpy as np
-from sklearn.datasets import load_iris
+import pandas as pd
+import warnings
+from sklearn.linear_model import QuantileRegressor
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.preprocessing import RobustScaler, StandardScaler, MinMaxScaler, MaxAbsScaler
+from sklearn.model_selection import KFold, cross_val_score
+warnings.filterwarnings(action='ignore')
 
-# 1. datasets
-#datasets = load_iris()
-#x = datasets.data
-#y = datasets ['target']
-x, y = load_iris(return_X_y=True)
+path_ddarung = './_data/ddarung/'
+path_kaggle = './_data/kaggle_bike/'
 
-print(x.shape, y.shape) #(150, 4) (150,)
+ddarung_train = pd.read_csv(path_ddarung + 'train.csv', index_col=0).dropna()
+kaggle_train = pd.read_csv(path_kaggle + 'train.csv' index_col=0).dropn()
 
-#2. model
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from sklearn.svm import LinearSVC
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
-from sklearn.ensemble import RandomForestRegressor
+#######################
 
-model = RandomForestRegressor
 
-#3. compile
-model.fit(x, y)
 
-#4. evaluate, prediction
-results = model.score(x,y)
 
-print(results)
