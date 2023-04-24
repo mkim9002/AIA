@@ -49,7 +49,7 @@ start_time = time.time()
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # 4. 모델 훈련
-history = model.fit(x_train, y_train, epochs=1, batch_size=99, validation_split=0.01,verbose=1)
+history = model.fit(x_train, y_train, epochs=100, batch_size=99, validation_split=0.01,verbose=1)
 
 end_time=time.time()
 

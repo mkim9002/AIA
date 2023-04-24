@@ -32,7 +32,19 @@ print(f"1.0 이상의 n_components 개수: {d100}")
 #0.999 몇개?
 #1.0 몇개???
 
+####실습##########
 
+pca = PCA(n_components=784)
+x = pca.fit_transform(x)
+
+pca_EVR = pca.explained_variance_ratio_
+cumsum =np.cumsum(pca_EVR)
+print(cumsum)
+
+print(np.argmax(cumsum >= 0.95) +1)   #154
+print(np.argmax(cumsum >= 0.99) +1)   #331
+print(np.argmax(cumsum >= 0.999) +1)   #486
+print(np.argmax(cumsum >= 1.0) +1)   #713
 
 
 
