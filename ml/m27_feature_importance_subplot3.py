@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.datasets import load_iris, load_breast_cancer
+from sklearn.datasets import load_diabetes
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
@@ -10,7 +10,7 @@ from sklearn.pipeline import make_pipeline
 import matplotlib.pyplot as plt
 
 #1. 데이터 
-datasets = load_breast_cancer()
+datasets = load_diabetes()
 # datasets = load_breast_cancer()
 
 x = datasets.data

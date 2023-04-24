@@ -6,7 +6,7 @@
 
 
 import numpy as np
-from sklearn.datasets import load_breast_cancer
+from sklearn.datasets import fetch_covtype
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
@@ -15,7 +15,7 @@ from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 
 #1. 데이터 
-datasets = load_breast_cancer()
+datasets = fetch_covtype()
 
 x = datasets.data
 y = datasets.target

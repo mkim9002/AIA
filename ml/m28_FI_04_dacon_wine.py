@@ -6,7 +6,7 @@
 
 
 import numpy as np
-from sklearn.datasets import load_breast_cancer
+from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
@@ -15,7 +15,7 @@ from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 
 #1. 데이터 
-datasets = load_breast_cancer()
+datasets = load_wine()
 
 x = datasets.data
 y = datasets.target
@@ -65,18 +65,18 @@ for i, model in enumerate(models):
 #결과비교
 # 예)
 #1. DecesionTree
-#기존 acc : 0.9298
-# 컬럼삭제후 acc :0.9298
+#기존 acc : 0.8611
+# 컬럼삭제후 acc :0.8611
 
 #2. RandomForest
-#기존 acc : 0.9561
-# 컬럼삭제후 acc :0.9561
+#기존 acc : 0.9722
+# 컬럼삭제후 acc :0.9722
 
 #3. GradientDecentBoosting
-#기존 acc : 0.9825
-# 컬럼삭제후 acc :0.9737
+#기존 acc : 0.8889
+# 컬럼삭제후 acc :0.8611
 
 #4. XGBoost
-#기존 acc : 0.9737
-# 컬럼삭제후 acc :0.9737
+#기존 acc : 0.9444
+# 컬럼삭제후 acc :0.9444
 
