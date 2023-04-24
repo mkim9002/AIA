@@ -74,9 +74,9 @@ for i, model in enumerate(models):
 
 #3. GradientDecentBoosting
 #기존 acc : 0.9667
-# 컬럼삭제후 acc :0.9667
+# 컬럼삭제후 acc :z
 
 #4. XGBoost
 #기존 acc : 0.9667
-# 컬럼삭제후 acc :0.9667
+# 컬럼삭제후 acc :
 
