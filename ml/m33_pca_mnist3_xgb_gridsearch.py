@@ -37,7 +37,7 @@ for d in [d95, d99, d999, d100]:
 
     # RandomizedSearchCV를 이용하여 최적의 하이퍼파라미터를 찾음
     parameters = {
-        'n_estimators': [100, 200, 300],
+        'n_estimators': [1, 2, 3],
         'learning_rate': [0.1, 0.3, 0.001, 0.01],
         'max_depth': [4, 5, 6],
         'colsample_bytree': [0.6, 0.9, 1],
