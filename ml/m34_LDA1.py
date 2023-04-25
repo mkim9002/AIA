@@ -6,7 +6,7 @@ from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.datasets import load_iris, load_breast_cancer, load_diabetes, load_digits
+from sklearn.datasets import load_iris, load_breast_cancer, load_diabetes, load_digits, load_wine, fetch_covtype
 
 
 # 1. 데이터
@@ -24,7 +24,6 @@ lda = LinearDiscriminantAnalysis(n_components=3)
 x = lda.fit_transform(x,y)
 print(x.shape)
 
- # 2. 모델
  
  
  

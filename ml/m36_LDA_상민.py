@@ -32,7 +32,8 @@ x_lda = lda.fit_transform(x, y)
 print(x_lda.shape)
 
 
- 
+ #회귀는 원래 안되지만 하지만 deibetes는 정수형 이라서 LDA에서 y의 클래스로 잘못 인식이라 돌아감
+ #회귀데이터는 원칙적으로 에러인데 위처럼 돌려도 되지만 성능은 보장못함
  
 
  
