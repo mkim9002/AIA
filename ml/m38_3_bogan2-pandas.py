@@ -58,6 +58,31 @@ print(data4)
 #2-4 특정값. 임의값으로 채우기
 data6 = data.fillna(value=7777777)
 print(data6)
+print('='*100)
  
+ #####################특정칼럼만 !!! ########
+ 
+ #1, x1컬럼에 평균값을 넣고
+# data['x1'] = data['x1'].fillna(means)
+# print(data)
+print('='*100)
+mean_x1 = data['x1'].mean()
+data['x1'] = data['x1'].fillna(mean_x1)
+print(data)
+
+print('='*100)
+ 
+ #2.  x2컬럼에 중위값 넣고
+median_x2 = data['x2'].median()
+data['x2'] = data['x2'].fillna(median_x2)
+print(data)
+
+print('='*100)
+ 
+ #3. x4 컬럼에  ffill한 후 /제일 위에 남는 행에 777777로 채우기
+# data['x4'] = data['x4'].fillna(method='ffill')
+# data.iloc[0, data.columns.get_loc('x4')] = 777777
+data['x4'] = data['x4'].fillna(method='ffill').fillna(value=777777)
+print(data)
  
  
