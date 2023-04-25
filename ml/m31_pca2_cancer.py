@@ -14,8 +14,8 @@ y = datasets.target
 print(x.shape,y.shape) #(569, 30)
 df = pd.DataFrame(x, columns=datasets.feature_names)
 
-for n in range(1, 31):
-    if n == 1:
+for n in range(0, 31):
+    if n == 0:
         # PCA를 사용하지 않는 경우
         x_pca = x
     else:
