@@ -1,19 +1,19 @@
 import numpy as np
-aaa = np.array([[-10, 2, 3, 4 ,5, 6,700, 8, 9, 10, 11, 12, 50],
-               [100,200,-30,400,500,600,-70000,
-                800,900,1000,210,420,350]])
-aaa = np.transpose(aaa)
-
 from sklearn.covariance import EllipticEnvelope
+
+aaa = np.array([[-10,2,3,4,5,6,700,8,9,10,11,12,50],
+               [100,200,-30,400,500,600,-70000,800,900,1000,210,420,350]])
+
 outliers = EllipticEnvelope(contamination=.1)
 
-outliers.fit(aaa)
-results = outliers.predict(aaa)
-
-outliers_index = np.where(results == -1)[0]
-outliers_values = aaa[outliers_index]
-
-print("이상치 위치 : ", outliers_index)
-print("이상치 값 : ", outliers_values)
+for i, column in enumerate(aaa): 
+    outliers.fit(column.reshape(-1, 1))  
+    results = outliers.predict(column.reshape(-1, 1))
+    outliers_save = np.where(results == -1)
+    # print(outliers_save)
+    # print(outliers_save[0])
+    outliers_values = column[outliers_save] 
+    
+    print(f"{i+1}번째 컬런의 이상치 : {', '.join(map(str, outliers_values))}\n 이상치의 위치 : {', '.join(map(str, outliers_save))}")
 
 #형태와 위치가 두개가 나올수 있게 수정
