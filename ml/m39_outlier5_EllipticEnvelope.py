@@ -17,3 +17,7 @@ for i, column in enumerate(aaa):
     print(f"{i+1}번째 컬런의 이상치 : {', '.join(map(str, outliers_values))}\n 이상치의 위치 : {', '.join(map(str, outliers_save))}")
 
 #형태와 위치가 두개가 나올수 있게 수정
+#1번째 컬런의 이상치 : 700, 50
+# 이상치의 위치 : [ 6 12]
+# 2번째 컬런의 이상치 : -70000, 1000
+# 이상치의 위치 : [6 9]
