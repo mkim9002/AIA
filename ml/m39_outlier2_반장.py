@@ -1,7 +1,7 @@
 import numpy as np
 # aaa = np.array([-10,2,3,4,5,6,7,8,9,10,11,12,50])
-aaa = np.array([2,3,4,5,6,7,8,-10,9,10,11,12,50])
-
+aaa = np.array([2,3,4,5,6,7,8,-10,9,10,11,12,50]) #-10 바꾸어 놈
+#반장이 sort 되어야 한다 했는데 엔피웨얼 에서 찾아줘
 
 def outliers(data_out):
     quartile_1, q2, quartile_3 = np.percentile(data_out,
