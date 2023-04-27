@@ -3,6 +3,9 @@ from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import KFold, StratifiedKFold, train_test_split, GridSearchCV, RandomizedSearchCV
 from sklearn.preprocessing import StandardScaler, RobustScaler
 from xgboost import XGBClassifier, XGBRegressor
+from sklearn.metrics import accuracy_score
+
+
 
 # 1. 데이터
 x, y = load_breast_cancer(return_X_y=True)
@@ -76,25 +79,19 @@ print("=================================")
 hist = model.evals_result()
 print(hist)
 
-#실습_그래프 그리기
+y_predict = model.predict(x_test)
+acc = accuracy_score(y_test,y_predict)
+print("accuracy score: " ,acc)
 
-import matplotlib.pyplot as plt
+###################################
+import pickle
+path = 'c:/study/_save/pickle_test/'
+# pickle.dump(model, open(path + 'm43_pickle1_save.dat','wb'))
 
-# Retrieve evaluation results
-hist = model.evals_result()
+import joblib
+joblib.dump(model, path + 'm44_joblib1_save.dat' )
 
-# Extract training and validation error values
-train_error = hist['validation_0']['error']
-val_error = hist['validation_1']['error']
 
-# Generate x-axis values
-epochs = range(1, len(train_error) + 1)
 
-# Plot training and validation error
-plt.plot(epochs, train_error, label='Training Error')
-plt.plot(epochs, val_error, label='Validation Error')
-plt.xlabel('Epochs')
-plt.ylabel('Error')
-plt.title('Training and Validation Error')
-plt.legend()
-plt.show()
+
+
