@@ -76,3 +76,4 @@ results = model.score(x_test, y_test)
 print(f"n_components={n}, 결과 : {results}")
 
 
+############
