@@ -28,29 +28,33 @@ kf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=337)
 # 'reg_alpha' : [0, 0.1, 0.01, 0.001, 1, 2, 10] / 디폴트 0 / 0~inf / L1 절대값 거즁차 규제 / alpha
 # 'reg_lambda' : [0, 0.1, 0.01, 0.001, 1, 2, 10] / 디폴트 1 / 0~inf / L2 제곱 가중치 규제 / lambda
 
-parameters = {'n_estimators' : [1000],
-              'learning_rate' : [0.1],   # 이게 성능이 가장 좋다
-              'max_depth' : [2],
-              'gamma' : [0],
-              'min_child_weight' : [1],
-              'subsample' : [0.7],
-              'colsample_bytree' : [1],
-              'colsample_bylevel' : [1],
-              'colsample_bynode' : [1],
-              'reg_alpha' : [0],
-              'reg_lambda' : [0.01]}
+parameters = {'n_estimators' : 1000,
+              'learning_rate' : 0.3,   # 이게 성능이 가장 좋다
+              'max_depth' : 3,
+              'gamma' : 1,
+              'min_child_weight' : 1,
+              'subsample' : 0.7,
+              'colsample_bytree' : 1,
+              'colsample_bylevel' : 1,
+              'colsample_bynode' : 1,
+              'reg_alpha' : 0,
+              'reg_lambda' : 0.01,
+              'random_state' : 1234,
+              
+              }
 
 # 2. 모델
-model = XGBClassifier(random_state=337,
-                      n_estimators=1000
-                      
-                      )
+model = XGBClassifier(**parameters)
+model.set_params(early_stopping_rounds=10, **parameters)
 
 # 3. 훈련
 model.fit(x_train, y_train,
-          eval_set=[(x_test,y_test)],
-          early_stopping_rounds=10
+          eval_set=[(x_train, y_train),(x_test,y_test)],
+        #   early_stopping_rounds=10,
+          verbose=1,
           )
+
+# model.set_params(early_stopping_rounds=10)
 
 # 4. 평가, 예측
 model.score(x_test, y_test)
