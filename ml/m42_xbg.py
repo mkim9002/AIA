@@ -41,14 +41,20 @@ parameters = {'n_estimators' : [1000],
               'reg_lambda' : [0.01]}
 
 # 2. 모델
-xgb = XGBClassifier(random_state=337)
-model = GridSearchCV(xgb, parameters, cv=kf, n_jobs=-1)
+model = XGBClassifier(random_state=337,
+                      n_estimators=1000
+                      
+                      )
 
 # 3. 훈련
-model.fit(x_train, y_train)
+model.fit(x_train, y_train,
+          eval_set=[(x_test,y_test)],
+          early_stopping_rounds=10
+          )
 
 # 4. 평가, 예측
-print(f'best param :  {model.best_params_}\n best score : {model.best_score_}\n result : {model.score(x_test,y_test)}')
+model.score(x_test, y_test)
+print(f'result : {model.score(x_test,y_test)}')
 
 #  best score : 0.9780219780219781
 #  result : 0.9473684210526315
