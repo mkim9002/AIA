@@ -74,3 +74,4 @@ test_pred = model.predict(test_csv)
 submission = pd.read_csv(path + 'sample_submission.csv', index_col=0)
 submission['quality'] = test_pred + 3  # Shift class labels back to the original range
 submission.to_csv(path + 'submit_wine_xgboost03.csv')
+###2124
