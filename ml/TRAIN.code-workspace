@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "D:/study/_data/AIFac_pollution/TRAIN"
+		},
+		{
+			"path": "D:/study/_data/AIFac_pollution/TRAIN_AWS"
+		},
+		{
+			"path": "D:/study/_data/AIFac_pollution/META"
+		},
+		{
+			"path": "D:/study/_data/AIFac_pollution/TEST_AWS"
+		},
+		{
+			"path": "D:/study/_data/AIFac_pollution/TEST_INPUT"
+		}
+	],
+	"settings": {}
+}
