@@ -87,6 +87,9 @@ score = model.score(x_test,y_test)
 print('model.score :', score)
 print('accuracy_score :', accuracy_score(y_test, y_predict))
 print('f1_score(macro) :', f1_score(y_test,y_predict, average='macro'))
+####
+
+###3
 
 
 
