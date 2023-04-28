@@ -65,4 +65,4 @@ submission['PM2.5'] = y_pred
 
 # Save the results
 submission.to_csv(save_path + 'submit.csv', index=False)
-print(f'Results saved to {save_path}submit7.csv')
+print(f'Results saved to {save_path}submit.csv')

@@ -20,6 +20,17 @@ le = LabelEncoder()
 train_csv['type'] = le.fit_transform(train_csv['type'])
 test_csv['type'] = le.transform(test_csv['type'])
 
+print(train_csv['quality'].value_counts().sort_index())
+
+# 3      26
+# 4     186
+# 5    1788
+# 6    2416
+# 7     924
+# 8     152
+# 9       5
+
+
 x = train_csv.drop(['quality'], axis=1)
 y = train_csv['quality'] - 3  # Shift class labels to start from 0
 
@@ -27,8 +38,23 @@ y = train_csv['quality'] - 3  # Shift class labels to start from 0
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, train_size=0.8, random_state=640874)
 
+parameters = {'n_estimators' : 1000,
+              'learning_rate' : 0.09,
+              'max_depth': 37,
+              'gamma': 1,
+              'min_child_weight': 1,
+              'subsample': 0.7,
+              'colsample_bytree': 0.8,
+              'colsample_bylevel': 0.7,
+              'colsample_bynode': 1,
+              'reg_alpha': 1,
+              'reg_lambda': 1,
+              'random_state' : 337,
+            #   'eval_metric' : 'error'
+              }
+
 # 2. 모델 구성
-model = XGBClassifier(n_estimators=100, random_state=640874)
+model = XGBClassifier(parameters, n_estimators=100, random_state=640874)
 
 # 3. 훈련
 model.fit(x_train, y_train)
@@ -47,4 +73,4 @@ print('Test Accuracy:', test_accuracy)
 test_pred = model.predict(test_csv)
 submission = pd.read_csv(path + 'sample_submission.csv', index_col=0)
 submission['quality'] = test_pred + 3  # Shift class labels back to the original range
-submission.to_csv(path + 'submit_wine_xgboost.csv')
+submission.to_csv(path + 'submit_wine_xgboost03.csv')

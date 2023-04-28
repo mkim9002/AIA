@@ -53,10 +53,22 @@ dval = xgb.DMatrix(X_val_split, label=y_val_split)
 dtest = xgb.DMatrix(X_test_scaled)
 
 # Set XGBoost parameters
-params = {'objective': 'reg:squarederror', 'eval_metric': 'mae', 'seed': 42}
-
+parameters = {'n_estimators' : 1000,
+              'learning_rate' : 0.09,
+              'max_depth': 37,
+              'gamma': 1,
+              'min_child_weight': 1,
+              'subsample': 0.7,
+              'colsample_bytree': 0.8,
+              'colsample_bylevel': 0.7,
+              'colsample_bynode': 1,
+              'reg_alpha': 1,
+              'reg_lambda': 1,
+              'random_state' : 337,
+            #   'eval_metric' : 'error'
+              }
 # Train the XGBoost model with early stopping
-model = xgb.train(params, dtrain, num_boost_round=1000,
+model = xgb.train(parameters, dtrain, num_boost_round=2000,
                   early_stopping_rounds=5, evals=[(dval, 'validation')])
 
 # Predict on the test set
@@ -67,5 +79,11 @@ submission = submission.reindex(range(len(y_pred)))
 submission['PM2.5'] = y_pred
 
 # Save the results
-submission.to_csv(save_path + 'submit01.csv', index=False)
+submission.to_csv(save_path + 'submit09.csv', index=False)
 print(f'Results saved to {save_path}submit.csv')
+
+
+
+#validation-rmse:0.05123 n_estimators' : 1000,
+            #   'learning_rate' : 0.09,
+            #   'max_depth': 37,        submit08.csv
