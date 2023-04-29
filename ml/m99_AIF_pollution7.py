@@ -46,7 +46,7 @@ X_test_scaled = scaler.transform(X_test)
 # Define the model architecture
 input_dim = X_train_scaled.shape[1]
 input_layer = Input(shape=(input_dim,))
-hidden_layer = Dense(190, activation='relu')(input_layer)
+hidden_layer = Dense(190000, activation='relu')(input_layer)
 output_layer = Dense(1)(hidden_layer)
 model = Model(inputs=input_layer, outputs=output_layer)
 
@@ -54,7 +54,7 @@ model = Model(inputs=input_layer, outputs=output_layer)
 model.compile(optimizer='adam', loss='mean_absolute_error')
 
 # Train the model
-model.fit(X_train_scaled, y_train, epochs=250, batch_size=128, validation_split=0.3, callbacks=[EarlyStopping(patience=5)])
+model.fit(X_train_scaled, y_train, epochs=250, batch_size=128, validation_split=0.01, callbacks=[EarlyStopping(patience=5)])
 
 # Predict on the test set
 y_pred = model.predict(X_test_scaled)
@@ -64,5 +64,5 @@ submission = submission.reindex(range(len(y_pred)))
 submission['PM2.5'] = y_pred
 
 # Save the results
-submission.to_csv(save_path + 'submit20.csv', index=False)
+submission.to_csv(save_path + 'submit23.csv', index=False)
 print(f'Results saved to {save_path}submit.csv')
