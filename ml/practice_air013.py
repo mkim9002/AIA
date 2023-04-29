@@ -5,6 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, make_scorer
 from xgboost import XGBClassifier
+
 # Load data
 train = pd.read_csv('d:/study/_data/dacon_air/train.csv')
 test = pd.read_csv('d:/study/_data/dacon_air/test.csv')
@@ -16,7 +17,6 @@ NaN = ['Origin_State', 'Destination_State', 'Airline', 'Estimated_Departure_Time
 for col in NaN:
     mode = train[col].mode()[0]
     train[col] = train[col].fillna(mode)
-
     if col in test.columns:
         test[col] = test[col].fillna(mode)
 print('Done.')
@@ -24,28 +24,25 @@ print('Done.')
 # Quantify qualitative variables
 qual_col = ['Origin_Airport', 'Origin_State', 'Destination_Airport', 'Destination_State', 'Airline', 'Carrier_Code(IATA)', 'Tail_Number']
 
+label_encoders = {}  # Dictionary to store label encoders
+
 for i in qual_col:
     le = LabelEncoder()
-    le = le.fit(train[i])
+    le.fit(train[i])
     train[i] = le.transform(train[i])
-
-    for label in np.unique(test[i]):
-        if label not in le.classes_:
-            le.classes_ = np.append(le.classes_, label)
-    test[i] = le.transform(test[i])
+    test[i] = np.where(test[i].isin(le.classes_), test[i], le.transform(test[i]))
+    label_encoders[i] = le  # Store label encoder in the dictionary
 print('Done.')
 
 # Remove unlabeled data
-train = train.dropna()
+train.dropna(inplace=True)
 
-column4 = {}
-for i, column in enumerate(sample_submission.columns):
-    column4[column] = i
+column_dict = {column: i for i, column in enumerate(sample_submission.columns)}
 
 def to_number(x, dic):
     return dic[x]
 
-train.loc[:, 'Delay_num'] = train['Delay'].apply(lambda x: to_number(x, column4))
+train['Delay_num'] = train['Delay'].map(lambda x: to_number(x, column_dict))
 print('Done.')
 
 train_x = train.drop(columns=['ID', 'Delay', 'Delay_num'])
@@ -68,45 +65,51 @@ cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 model = XGBClassifier(random_state=42)
 
 param_grid = {
-    'n_estimators' : [1000],
-              'learning_rate' : [0.1],   # 이게 성능이 가장 좋다
-              'max_depth' : [2],
-              'gamma' : [0],
-              'min_child_weight' : [1],
-              'subsample' : [0.7],
-              'colsample_bytree' : [1],
-              'colsample_bylevel' : [1],
-              'colsample_bynode' : [1],
-              'reg_alpha' : [0],
-              'reg_lambda' : [0.01],
+    'n_estimators': [1000],
+    'learning_rate': [0.1],  # This seems to be the best performing value
+    'max_depth': [1],
+    'gamma': [11],
+    'min_child_weight': [11],
+    'subsample': [1],
+    'colsample_bytree': [1],
+    'colsample_bylevel': [1],
+    'colsample_bynode': [1],
+    'reg_alpha': [1],
+    'reg_lambda': [1],
 }
 
-grid = GridSearchCV(model,
-                    param_grid,
-                    cv=cv,
-                    scoring='accuracy',
-                    n_jobs=-1,
-                    verbose=1)
+grid = GridSearchCV(
+    model,
+    param_grid,
+    cv=cv,
+    scoring='accuracy',
+    n_jobs=-1,
+    verbose=1
+)
 
 grid.fit(train_x, train_y)
-
 best_model = grid.best_estimator_
 
 # Model evaluation
-val_y_pred = best_model.predict(val_x)
+val_x_encoded = val_x.copy()
+
+for col, le in label_encoders.items():
+    val_x_encoded[col] = np.where(val_x_encoded[col].isin(le.classes_), val_x_encoded[col], le.transform(val_x_encoded[col]))
+
+val_y_pred = best_model.predict(val_x_encoded)
 acc = accuracy_score(val_y, val_y_pred)
 f1 = f1_score(val_y, val_y_pred, average='weighted')
 pre = precision_score(val_y, val_y_pred, average='weighted')
 recall = recall_score(val_y, val_y_pred, average='weighted')
 
-print('Accuracy_score:',acc)
-print('F1 Score:f1',f1)
+print('Accuracy_score:', acc)
+print('F1 Score:', f1)
 
-y_pred = best_model.predict_proba(test_x)
+test_x_encoded = test_x.copy()
+
+for col, le in label_encoders.items():
+    test_x_encoded[col] = np.where(test_x_encoded[col].isin(le.classes_), test_x_encoded[col], le.transform(test_x_encoded[col]))
+
+y_pred = best_model.predict_proba(test_x_encoded)
 submission = pd.DataFrame(data=y_pred, columns=sample_submission.columns, index=sample_submission.index)
-submission.to_csv('d:/study/_data/dacon_air/submit11.csv')
-
-#09 Accuracy_score: 0.8004548930413129
-# F1 Score:f1 0.7541834854167154
-#10 Accuracy_score: 0.8001019587851219
-# F1 Score:f1 0.7541278007806617
+submission.to_csv('d:/study/_data/dacon_air/submit16.csv')
