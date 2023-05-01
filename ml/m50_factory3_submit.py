@@ -134,22 +134,22 @@ print(x, '\n', y)
 
 
 x_train, x_test, y_train, y_test= train_test_split(
-    x,y, train_size=0.8, random_state=282, shuffle=True
+    x,y, train_size=0.8, random_state=123, shuffle=True
 ) 
 
-parameter = {'n_estimators' : 20000,
+parameter = {'n_estimators' : 10000,
               'learning_rate' : 0.07,   # 이게 성능이 가장 좋다
               'max_depth' : 3,
-              'gamma' : 1,
-              'min_child_weight' : 1,
-              'subsample' : 0.7,
-              'colsample_bytree' : 1,
-              'colsample_bylevel' : 1,
-              'colsample_bynode' : 1,
-              'reg_alpha' : 0,
-              'reg_lambda' : 0.01,
-              'random_state' : 1234,
-              'verbose' :0,
+            #   'gamma' : 1,
+            #   'min_child_weight' : 1,
+            #   'subsample' : 0.7,
+            #   'colsample_bytree' : 1,
+            #   'colsample_bylevel' : 1,
+            #   'colsample_bynode' : 1,
+            #   'reg_alpha' : 0,
+            #   'reg_lambda' : 0.01,
+            #   'random_state' : 1234,
+            #   'verbose' :0,
               'n_jobs': '-1'
               }
 
@@ -192,7 +192,7 @@ answer_sample_csv = pd.read_csv(path + 'answer_sample.csv',
 answer_sample_csv['PM2.5'] = y_submit
 print(answer_sample_csv)
 
-answer_sample_csv.to_csv(path + 'm50_factory3_submit.csv',
+answer_sample_csv.to_csv(path + 'm50_factory4_submit.csv',
                          index=None)
 
 
