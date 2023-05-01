@@ -1,11 +1,11 @@
 import pandas as pd
 import numpy as np
-from tensorflow.keras.layers import Input, Dense
+from tensorflow.keras.layers import Input, Dense, Dropout, LeakyReLU, ELU, Flatten
+from sklearn.preprocessing import MaxAbsScaler, LabelEncoder, StandardScaler
 from tensorflow.keras.models import Model
 from tensorflow.keras.callbacks import EarlyStopping
-from sklearn.preprocessing import MaxAbsScaler
-from sklearn.metrics import mean_absolute_error
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import mean_absolute_error
 
 # Load the data
 path = 'c:/study/_data/AIFac_pollution/'
@@ -46,20 +46,27 @@ X_test_scaled = scaler.transform(X_test)
 # Define the model architecture
 input_dim = X_train_scaled.shape[1]
 input_layer = Input(shape=(input_dim,))
-hidden_layer1 = Dense(240, activation='relu')(input_layer)
-hidden_layer2 = Dense(120, activation='relu')(hidden_layer1)
-hidden_layer3 = Dense(60, activation='relu')(hidden_layer2)
-hidden_layer4 = Dense(30, activation='relu')(hidden_layer3)
-hidden_layer5 = Dense(15, activation='relu')(hidden_layer4)
-hidden_layer6 = Dense(7, activation='relu')(hidden_layer5)
-output_layer = Dense(1)(hidden_layer6)
+hidden_layer = Dense(240)(input_layer)
+
+# Add 10 hidden layers with activation functions and dropout
+for _ in range(10):
+    hidden_layer = Dense(120)(hidden_layer)
+    hidden_layer = Dropout(0.1)(hidden_layer)
+    hidden_layer = LeakyReLU(60)(hidden_layer)
+    hidden_layer = ELU()(hidden_layer)
+    hidden_layer = Dense(30)(hidden_layer)
+    hidden_layer = Dropout(0.1)(hidden_layer)
+    hidden_layer = ELU(10)(hidden_layer)
+
+flatten = Flatten()(hidden_layer)
+output_layer = Dense(1)(flatten)
 model = Model(inputs=input_layer, outputs=output_layer)
 
 # Compile the model
-model.compile(optimizer='adam', loss='mean_absolute_error')
+model.compile(optimizer='Adagrad', loss='mean_absolute_error')
 
 # Train the model
-model.fit(X_train_scaled, y_train, epochs=250, batch_size=128, validation_split=0.001, callbacks=[EarlyStopping(patience=5)])
+model.fit(X_train_scaled, y_train, epochs=1000, batch_size=128, validation_split=0.001, callbacks=[EarlyStopping(patience=10)])
 
 # Predict on the test set
 y_pred = model.predict(X_test_scaled)
@@ -69,5 +76,8 @@ submission = submission.reindex(range(len(y_pred)))
 submission['PM2.5'] = y_pred
 
 # Save the results
-submission.to_csv(save_path + 'submit27.csv', index=False)
+submission.to_csv(save_path + 'submit37.csv', index=False)
 print(f'Results saved to {save_path}submit.csv')
+
+#optimizer='Adagrad
+#'Adagrad'= 10.0058801
