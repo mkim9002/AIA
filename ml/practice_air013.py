@@ -65,12 +65,12 @@ test_x = scaler.transform(test_x)
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
 # Model and hyperparameter tuning using GridSearchCV
-model = XGBClassifier(random_state=42)
+model = XGBClassifier(random_state=108)
 
 param_grid = {
-    'learning_rate': [0.00001, 0.00001],
-    'max_depth': [1000, 1000],
-    'n_estimators': [14, 14],
+    'learning_rate': [0.01, 0.01],
+    'max_depth': [60, 60],
+    'n_estimators': [104, 104],
 }
 
 grid = GridSearchCV(model,
@@ -96,7 +96,7 @@ print('F1 Score:f1',f1)
 
 y_pred = best_model.predict_proba(test_x)
 submission = pd.DataFrame(data=y_pred, columns=sample_submission.columns, index=sample_submission.index)
-submission.to_csv('d:/study/_data/dacon_air/submit16.csv')
+submission.to_csv('d:/study/_data/dacon_air/submit17.csv')
 
 #09 Accuracy_score: 0.8004548930413129
 # F1 Score:f1 0.7541834854167154
