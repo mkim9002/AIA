@@ -76,3 +76,5 @@ y_pred = model.predict(x)
 print(model.__class__.__name__, "스코어 :",
       round(mean_absolute_error(y, y_pred),4))  
 print(model.predict([[2,110,43]]))  
+# CatBoostRegressor 스코어 : 0.0638
+# [[138.21649371  32.99740595  67.8741709 ]]
