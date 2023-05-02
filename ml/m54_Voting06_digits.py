@@ -1,7 +1,7 @@
 #실습
 import numpy as np
 import pandas as pd
-from sklearn.datasets import fetch_covtype
+from sklearn.datasets import load_digits
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -13,7 +13,7 @@ from sklearn.ensemble import VotingClassifier
 
 
 #1. 데이터
-x, y = fetch_covtype(return_X_y=True)
+x, y = load_digits(return_X_y=True)
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=123, train_size=0.8, stratify=y)
 

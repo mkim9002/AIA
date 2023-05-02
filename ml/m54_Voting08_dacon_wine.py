@@ -1,37 +1,37 @@
-#실습
 import numpy as np
 import pandas as pd
-from sklearn.datasets import fetch_covtype
+from sklearn.datasets import load_diabetes, fetch_california_housing
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, r2_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import VotingClassifier
-
+from sklearn.ensemble import VotingClassifier, VotingRegressor
+from xgboost import XGBRegressor
+from lightgbm import LGBMRegressor
+from catboost import CatBoostRegressor
 
 
 #1. 데이터
-x, y = fetch_covtype(return_X_y=True)
+x, y = load_diabetes(return_X_y=True)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=123, train_size=0.8, stratify=y)
+x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=123, train_size=0.8)
 
 scaler  = StandardScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
 #2. model
-lr = LogisticRegression()
-knn = KNeighborsClassifier(n_neighbors=8)
-dt = DecisionTreeClassifier()
+xg = XGBRegressor()
+lg = LGBMRegressor()
+cat = CatBoostRegressor(verbose=0)
 
 
 
-
-model = VotingClassifier(
-    estimators=[('LR',lr), ('KNN',knn),('DT',dt)],
-    voting='soft'   #default
+model = VotingRegressor(
+    estimators=[('XG',xg), ('LG',lg),('CAT',cat)],
+    # voting='hard'   #default : hard
 )
 
 #3.훈련
@@ -40,7 +40,7 @@ model.fit(x_train,y_train)
 #4.평가
 y_pred = model.predict(x_test)
 print('model.score :', model.score(x_test,y_test))
-print('Voting acc :', accuracy_score(y_test,y_pred))
+print('Voting r2 :', r2_score(y_test,y_pred))
 
 
 #hard voting 결과
@@ -50,13 +50,13 @@ print('Voting acc :', accuracy_score(y_test,y_pred))
 #VotingClassifier : model.score : 0.9824561403508771   acc : 0.9824561403508771     
 # soft :   model.score : 0.9824561403508771  acc : 0.9824561403508771
 
-classifiers = [lr,knn,dt]
-for model2 in classifiers:
+regressor = [xg,lg,cat]
+for model2 in regressor:
     model2.fit(x_train,y_train)
     y_predict = model2.predict(x_test)
-    score2 = accuracy_score(y_test,y_predict)
+    score2 = r2_score(y_test,y_predict)
     class_name = model2.__class__.__name__
-    print("{0} 정확도 : {1:.4f}".format(class_name,score2))
+    print("{0} R2 : {1:.4f}".format(class_name,score2))
 
 
 # model.score : 0.9824561403508771

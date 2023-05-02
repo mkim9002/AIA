@@ -1,7 +1,7 @@
 #실습
 import numpy as np
 import pandas as pd
-from sklearn.datasets import fetch_covtype
+from sklearn.datasets import load_digits
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -13,11 +13,47 @@ from sklearn.ensemble import VotingClassifier
 
 
 #1. 데이터
-x, y = fetch_covtype(return_X_y=True)
+path = './_data/dacon_wine/'
+path_save = './_save/dacon_wine/'
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=123, train_size=0.8, stratify=y)
+train_csv = pd.read_csv(path + 'train.csv', index_col=0)
+print(train_csv) #[5497 rows x 13 columns]
+print(train_csv.shape) #(5497,13)
+ 
+test_csv = pd.read_csv(path + 'test.csv', index_col=0)
+print(test_csv) #[1000 rows x 12 columns] / quality 제외 (1열)
 
-scaler  = StandardScaler()
+#labelencoding
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+le.fit(train_csv['type'])
+aaa = le.transform(train_csv['type'])
+print(aaa)   #[1 0 1 ... 1 1 1]
+print(type(aaa))  #<class 'numpy.ndarray'>
+print(aaa.shape)
+print(np.unique(aaa, return_counts=True))
+
+train_csv['type'] = aaa
+print(train_csv)
+test_csv['type'] = le.transform(test_csv['type'])
+
+print(le.transform(['red', 'white'])) #[0 1]
+
+
+#1-1 결측치 제거 
+# print(train_csv.isnull().sum()) #결측치없음 
+
+x = train_csv.drop(['quality'], axis=1)
+print(x.shape)                       #(5497, 12)
+y = train_csv['quality']
+
+
+
+x_train, x_test, y_train, y_test = train_test_split(
+    x, y, random_state=123, train_size=0.8, shuffle=True, stratify=y
+)
+
+scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
