@@ -52,4 +52,9 @@ model.fit(y_stacking_predict, y_test)
 score = model.score(y_stacking_predict,y_test)
 print("스태킹 결과 : ", score)
 
+# XGBClassifierACC :0.9912
+# LGBMClassifierACC :0.9825
+# CatBoostClassifierACC :0.9912
+# (114, 3)
+# 스태킹 결과 :  0.9912280701754386
 
