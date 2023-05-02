@@ -11,7 +11,6 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import VotingClassifier
 
 
-
 #1. 데이터
 path = 'c:/study/_data/dacon_diabetes/'
 path_save = 'c:/study/_save/dacon_diabetes/'
