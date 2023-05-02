@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import glob
-from sklearn.preprocessing import MaxAbsScaler, LabelEncoder, StandardScaler
+from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from xgboost import XGBRegressor
 import time
@@ -57,9 +57,8 @@ train_dataset = train_dataset.dropna()
 ##### 시즌 -파생피쳐도 생각!!!
 
 # Perform one-hot encoding on categorical features
-categorical_features = ['month', 'hour']
-train_dataset = pd.get_dummies(train_dataset, columns=categorical_features)
-test_input_dataset = pd.get_dummies(test_input_dataset, columns=categorical_features)
+train_dataset = pd.get_dummies(train_dataset, columns=['month', 'hour', 'locate'])
+test_input_dataset = pd.get_dummies(test_input_dataset, columns=['month', 'hour', 'locate'])
 
 y = train_dataset['PM2.5']
 x = train_dataset.drop(['PM2.5'], axis=1)
@@ -67,19 +66,9 @@ x = train_dataset.drop(['PM2.5'], axis=1)
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, random_state=123, shuffle=True)
 
 parameter = {'n_estimators': 20000,
-              'learning_rate': 0.001,
-              'max_depth': 2,
-            #   'gamma': 1,
-            #   'min_child_weight': 1,
-            #   'subsample': 0.7,
-            #   'colsample_bytree': 1,
-            #   'colsample_bylevel': 1,
-            #   'colsample_bynode': 1,
-            #   'reg_alpha': 0,
-            #   'reg_lambda': 0.01,
-            #   'random_state': 1234,
-            #   'verbose': 0,
-              'n_jobs': '-1'
+              'learning_rate': 0.1,
+              'max_depth': 3,
+              'n_jobs': -1
               }
 
 # 2. 모델
@@ -87,35 +76,37 @@ model = XGBRegressor()
 
 # 3. 컴파일, 훈련
 model.set_params(**parameter,
-                 eval_metrics='mae',
-                 early_stopping_rounds=200,
+                 eval_metric='mae',
+                 early_stopping_rounds=200
                  )
+
 start_time = time.time()
-model.fit(x_train, y_train, verbose=1,
-          eval_set=[(x_train, y_train), (x_test, y_test)]
+model.fit(x_train, y_train,
+          eval_set=[(x_train, y_train), (x_test, y_test)],
+          verbose=True
           )
-
 end_time = time.time()
-print("걸린시간 :", round(end_time - start_time, 2), "초")
 
-# 4 평가 예측
+print("걸린시간:", round(end_time - start_time, 2), "초")
+
+# 4. 평가 예측
 y_predict = model.predict(x_test)
 
 result = model.score(x_test, y_test)
-print("model.score: ", result)
+print("model.score:", result)
 
 r2 = r2_score(y_test, y_predict)
-print("r2 스코어 : ", r2)
+print("r2 스코어:", r2)
 
 mae = mean_absolute_error(y_test, y_predict)
-print("mae 스코어 : ", mae)
+print("mae 스코어:", mae)
 
-# Update the submission dataframe with the predicted values
-submission = submission.reindex(range(len(y_predict)))
-submission['PM2.5'] = y_predict
+# 제출 파일 만들기
+x_submit = test_input_dataset[test_input_dataset.isna().any(axis=1)]
+x_submit = x_submit.drop(['PM2.5'], axis=1)
 
-# Save the results
-submission.to_csv(save_path + 'submit43.csv', index=False)
-print(f'Results saved to {save_path}submit.csv')
+y_submit = model.predict(x_submit)
 
-#
+answer_sample_csv = pd.read_csv(path + 'answer_sample.csv', index_col=None, header=0)
+answer_sample_csv['PM2.5'] = y_submit
+answer_sample_csv.to_csv(path + 'm50_factory05_submit.csv', index=None)
