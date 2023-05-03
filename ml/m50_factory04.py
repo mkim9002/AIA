@@ -134,21 +134,21 @@ print(x, '\n', y)
 
 
 x_train, x_test, y_train, y_test= train_test_split(
-    x,y, train_size=0.8, random_state=3379, shuffle=True
+    x,y, train_size=0.8, random_state=777, shuffle=True
 ) 
 
-parameter = {'n_estimators' : 22100,
-              'learning_rate' : 0.06,   # 이게 성능이 가장 좋다
-              'max_depth' : 25,
-              'gamma' : 3,
+parameter = {'n_estimators' : 1,
+              'learning_rate' : 0.01,   # 이게 성능이 가장 좋다
+              'max_depth' : 1,
+              'gamma' : 1,
               'min_child_weight' : 1,
-              'subsample' : 0.7,
+              'subsample' : 0.1,
               'colsample_bytree' : 1,
               'colsample_bylevel' : 1,
               'colsample_bynode' : 1,
               'reg_alpha' : 0,
-              'reg_lambda' : 0.01,
-              'random_state' : 1234,
+              'reg_lambda' : 0.1,
+              'random_state' : 1,
               'verbose' :0,
               'n_jobs': '-1'
               }
@@ -159,7 +159,7 @@ model = XGBRegressor()
 #3. 컴파일, 훈련
 model.set_params(**parameter,
                  eval_metrics='mae',
-                 early_stopping_rounds=180,
+                 early_stopping_rounds=210,
                  )
 start_time = time.time()
 model.fit(x_train, y_train, verbose =1,
@@ -192,7 +192,7 @@ answer_sample_csv = pd.read_csv(path + 'answer_sample.csv',
 answer_sample_csv['PM2.5'] = y_submit
 print(answer_sample_csv)
 
-answer_sample_csv.to_csv(path + 'm50_factory09_submit.csv',
+answer_sample_csv.to_csv(path + 'm50_factory012_submit.csv',
                          index=None)
 
 
