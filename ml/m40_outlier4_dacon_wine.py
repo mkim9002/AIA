@@ -15,7 +15,7 @@ from tensorflow.python.keras.callbacks import EarlyStopping
 path = './_data/wine_quality/'   #점 하나 현재폴더의밑에 점하나는 스터디
 path_save = './_save/wine_quality/' 
 
-train_csv = pd.read_csv(path + 'train.csv', index_col=0) 
+train_csv = pd.read_csv(path + 'train.csv', index_col=0) m64
 
 test_csv = pd.read_csv(path + 'test.csv', index_col=0) 
 
