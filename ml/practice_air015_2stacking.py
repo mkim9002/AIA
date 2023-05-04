@@ -70,23 +70,23 @@ train_x, val_x, train_y, val_y = train_test_split(train_x, train_y, test_size=0.
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
 # Model and hyperparameter tuning using GridSearchCV
-model = XGBClassifier(random_state=555,
+model = XGBClassifier(random_state=7877,
                       tree_method='gpu_hist', 
-                      gpu_id=0, 
+                      gpu_id=1, 
                       predictor = 'gpu_predictor')
 
 param_grid = {
-    'learning_rate': [0.01, 0.01],
-    'max_depth': [1,1],
-    'n_estimators': [1, 1],
+    'learning_rate': [0.02, 0.02],
+    'max_depth': [2,2],
+    'n_estimators': [2, 2],
 }
 
 grid = GridSearchCV(model,
                     param_grid,
                     cv=cv,
                     scoring='accuracy',
-                    n_jobs=-1,
-                    verbose=1)
+                    n_jobs=-2,
+                    verbose=2)
 
 grid.fit(train_x, train_y)
 
@@ -105,7 +105,7 @@ print('F1 Score:f1',f1)
 
 y_pred = best_model.predict_proba(test_x)
 submission = pd.DataFrame(data=y_pred, columns=sample_submission.columns, index=sample_submission.index)
-submission.to_csv('d:/study/_data/dacon_air/submit28.csv')
+submission.to_csv('d:/study/_data/dacon_air/submit29.csv')
 
 # param_grid = {
 #     'learning_rate': [0.0001, 0.05],
