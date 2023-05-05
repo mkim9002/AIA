@@ -3,7 +3,7 @@ from sklearn.datasets import load_iris, load_breast_cancer,load_wine
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier
 
 import warnings
 warnings.filterwarnings(action='ignore')
@@ -18,7 +18,7 @@ data_list = [load_iris(return_X_y=True),
 model_list =[LinearSVC(),
              LogisticRegression(),
              DecisionTreeClassifier(),
-             RandomForestRegressor()]
+             RandomForestClassifier()]
 
 
 data_name_list = ['아이리스 :',

@@ -1,28 +1,32 @@
-import numpy as np
-from sklearn.datasets import load_breast_cancer
-
-#1.데이터
-x,y =load_breast_cancer(return_X_y=True)
-
-print(x.shape, y.shape) #(569, 30) (569,)
-
-#2, 모델
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from sklearn.svm import LinearSVC
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import load_iris
+from sklearn.model_selection import cross_val_score, cross_val_predict
+from sklearn.model_selection import train_test_split, KFold,StratifiedKFold
+from sklearn.metrics import accuracy_score
 from sklearn.ensemble import RandomForestClassifier
 
-# model =LinearSVC() #0.9209138840070299
-# model =LogisticRegression() #0.9472759226713533
-# model = DecisionTreeClassifier() #1.0
+import numpy as np
+
+# 1. 데이터
+iris = load_iris()
+x, y = iris.data, iris.target
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, random_state=123, test_size=0.2,stratify=y)
+
+# kf = KFold(n_splits=5, shuffle=True, random_state=337)
+kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=337)#알고리즘
+
+# 2. 모델
 model = RandomForestClassifier()
 
-# 3.컴파일 훈련
-model.fit(x,y)
+# 3. 교차 검증 평가
+scores = cross_val_score(model, x_train, y_train, cv=kf)
+print('cross_val_score :', scores)
+print('교차 검증 평균 점수 :', round(np.mean(scores),4))
 
-#4, 훈련 평가
-results = model.score(x,y)
+#4. 예측 및 평가
+model.fit(x_train,y_train)
+y_pred = model.predict(x_test)
+acc = accuracy_score(y_test, y_pred)
+print('acc :', acc)
 
-print(results)
+
