@@ -68,7 +68,7 @@ cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
 # Base models
 models = [
-    ('xgb', XGBClassifier(random_state=337)),
+    ('xgb', XGBClassifier(random_state=321)),
     ('rf', RandomForestClassifier())
 ]
 
@@ -95,4 +95,4 @@ print('F1 Score:', f1)
 # Predicting on test data
 y_pred = stacking_model.predict_proba(test_x)
 submission = pd.DataFrame(data=y_pred, columns=sample_submission.columns, index=sample_submission.index)
-submission.to_csv('d:/study/_data/dacon_air/submit22.csv')
+submission.to_csv('d:/study/_data/dacon_air/submit31.csv')
