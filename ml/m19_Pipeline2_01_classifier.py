@@ -1,157 +1,105 @@
-from sklearn.utils import all_estimators
-from sklearn.datasets import load_iris, load_breast_cancer, load_digits, load_wine, fetch_california_housing, load_diabetes
-import pandas as pd
+#분류모델 - pipline사용
+#삼중for문 : 1. 데이터셋, 2.스케일러, 3.모델 
 import numpy as np
-import warnings
-from sklearn.linear_model import QuantileRegressor
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.preprocessing import RobustScaler, StandardScaler, MinMaxScaler, MaxAbsScaler
-from sklearn.model_selection import KFold, cross_val_score, cross_val_predict, train_test_split
-from sklearn.metrics import accuracy_score
-warnings.filterwarnings(action='ignore')
+from sklearn.datasets import load_iris, load_breast_cancer, load_wine, fetch_covtype, load_digits
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.pipeline import make_pipeline, Pipeline
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.svm import SVC
-
-path_ddarung = './_data/ddarung/'
-path_kaggle = './_data/kaggle_bike/'
-
-ddarung_train = pd.read_csv(path_ddarung + 'train.csv', index_col=0).dropna()
-kaggle_train = pd.read_csv(path_kaggle + 'train.csv', index_col=0).dropna()
-
-data_list = [load_iris, load_breast_cancer, load_digits, load_wine,load_diabetes, ddarung_train, kaggle_train]
-
-algorithms_classifier = all_estimators(type_filter='classifier')
-algorithms_regressor = all_estimators(type_filter='regressor')
-
-max_score = 0
-max_name = ''
-max_acc = 0
-max_acc_name = ''
-
-scaler_list = [RobustScaler(), StandardScaler(), MinMaxScaler(), MaxAbsScaler()]
-n_split = 10
-kf = KFold(n_splits=n_split, shuffle=True, random_state=123)
-
-for i in range(len(data_list)):
-    if i<4:
-        x, y = data_list[i](return_X_y=True)
-        x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True, random_state=123)
-        for j in scaler_list:
-            scaler = j
-            x = scaler.fit_transform(x)
-            for name, algorithm in algorithms_classifier:
-                try:
-                    model = algorithm()
-                    results = cross_val_score(model, x_train, y_train, cv=kf)
-                    if max_score<np.mean(results):
-                        max_score=np.mean(results)
-                        max_name = name
-                    y_predict = cross_val_predict(model, x_test, y_test)
-                    acc = accuracy_score(y_test, y_predict)
-                    print(type(j).__name__, ' - ', data_list[i].__name__, name, 'predict acc : ', acc)
-                    if max_acc<acc:
-                        max_acc=acc
-                        max_acc_name = name
-                    # print(type(j).__name__, data_list[i].__name__, name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
-                except:
-                    # print(type(j).__name__, data_list[i].__name__, name, 'set default value first')
-                    continue
-            print('\n', type(j).__name__, ' - ', data_list[i].__name__, 'max_score :', max_name, max_score)
-            print('\n', type(j).__name__, ' - ', data_list[i].__name__, 'max_predict_acc :', max_acc_name, max_acc, '\n')
-    else:
-        break
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    #     x, y = data_list[i](return_X_y=True)
-    #     for j in scaler_list:
-    #         scaler = j
-    #         x = scaler.fit_transform(x)
-    #         for name, algorithm in algorithms_regressor:
-    #             try:
-    #                 model = algorithm()
-    #                 if name=="GaussianProcessRegressor":
-    #                     del model
-    #                     model = GaussianProcessRegressor(alpha=1000)
-    #                 results = cross_val_score(model, x, y, cv=kf)
-    #                 if max_score<np.mena(results):
-    #                     max_score=np.mean(results)
-    #                     max_name=name
-    #                 y_predict = cross_val_predict(model, x_test, y_test)
-    #                 acc = accuracy_score(y_test, y_predict)
-    #                 print('predict acc : ', acc)
-    #                 # print(type(j).__name__, data_list[i].__name__, name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
-    #             except:
-    #                 # print(type(j).__name__, data_list[i].__name__, name, 'set default value first')
-    #                 continue
-    #         print('\n', type(j).__name__, ' - ', data_list[i].__name__, 'max_score :', max_name, max_score)
-    # elif i==6:
-    #     x = data_list[i].drop(['count'], axis=1)
-    #     y = data_list[i]['count']
-    #     for j in scaler_list:
-    #         scaler = j
-    #         x = scaler.fit_transform(x)
-    #         for name, algorithm in algorithms_regressor:
-    #             try:
-    #                 model = algorithm()
-    #                 results = cross_val_score(model, x, y, cv=kf)
-    #                 if max_score<np.mean(results):
-    #                     max_score=np.mean(results)
-    #                     max_name=name
-    #                 # print(type(j).__name__, 'ddarung', name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
-    #             except:
-    #                 # print(type(j).__name__, 'ddarung', name, 'set deault value first')
-    #                 continue
-    #         print('\n', type(j).__name__, ' - ', 'ddarung max_score :', max_name,  max_score)
-    # else:
-    #     x = data_list[i].drop(['casual', 'registered', 'count'], axis=1)
-    #     y = data_list[i]['count']
-    #     for j in data_list:
-    #         scaler = j
-    #         x = scaler.fit_transform
-    #         for name, algorithm in algorithms_regressor:
-    #             try:
-    #                 model = algorithm()
-    #                 if name=="QuantileRegressor":
-    #                     del model
-    #                     model = QuantileRegressor(alpha=1000)
-    #                 results = cross_val_score(model, x, y, cv=kf)
-    #                 if max_score<np.mean(results):
-    #                     max_score=np.mean(results)
-    #                     max_name=name
-    #                 # print(type(j).__name__, 'kaggle', name, 'acc :', results, 'mean of cross_val_score : ', round(np.mean(results), 5))
-    #             except:
-    #                 # print(type(j).__name__, 'kaggle', name, 'set deault value first')
-    #                 continue
-    #         print('\n', type(j).__name__, ' - ', 'kaggle max_score :', max_name, max_score)
-    
-    
-    
-        #2. model
-# model = RandomForestClassifier()
-# model =make_pipeline(StandardScaler(), SVC())
-model =Pipeline([("sdf",StandardScaler()), ("svc",SVC())])
+from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
+from sklearn.pipeline import make_pipeline, Pipeline
+from sklearn.metrics import accuracy_score
+from sklearn.pipeline import make_pipeline
 
 
-#3. 훈련
-model.fit(x_train, y_train)
+
+# 1. 데이터 
+datasets = [(load_iris(return_X_y=True), 'Iris'), 
+            (load_breast_cancer(return_X_y=True), 'Breast Cancer'),
+            (load_wine(return_X_y=True), 'Wine'),
+            (load_digits(return_X_y=True), 'Digits')]
+dataname = ['iris', 'cancer', 'wine', 'digits']
 
 
-#4. 평가 예측
-result = model.score(x_test,y_test)
-print("model.score :", result)
+# 2. 모델구성
+scalers = [MinMaxScaler(), StandardScaler(), RobustScaler(), MaxAbsScaler()]
+models = [RandomForestClassifier(), DecisionTreeClassifier(), SVC()]
 
-y_predict = model.predict(x_test)
-acc = accuracy_score(y_test,y_predict)
+# max_score = 0
+
+for data, data_name in datasets: 
+    x, y = data
+    x_train, x_test, y_train, y_test = train_test_split(
+    x, y, train_size=0.8, shuffle=True, random_state=337, stratify=y)
+    # print(f'Data: {data_name}')
+    max_score = 0
+
+    for scaler in scalers:
+        for model in models:
+            pipeline = Pipeline([('s', scaler), ('m', model)])
+            pipeline.fit(x_train, y_train)            
+            score = pipeline.score(x_test, y_test)
+            # print(f'{scaler.__class__.__name__} + {model.__class__.__name__} Score: {score:.4f}')
+
+            y_pred = pipeline.predict(x_test)
+            acc = accuracy_score(y_test, y_pred)
+            # print(f'{scaler.__class__.__name__} + {model.__class__.__name__} Accuracy: {acc:.4f}')
+            if max_score < acc:
+                max_score = acc
+                max_name = f'{scaler.__class__.__name__} + {model.__class__.__name__}'
+    print('\n')
+        #dataset name , 최고모델, 성능
+    print('========', data_name,'========')        
+    print('최고모델:', max_name, max_score)
+    print('================================')  
+
+
+'''
+#Pipeline([('s', scaler), ('m', model)])
+======== Iris ========
+최고모델: MinMaxScaler + RandomForestClassifier 0.9666666666666667
+================================
+======== Breast Cancer ========
+최고모델: RobustScaler + RandomForestClassifier 0.956140350877193
+================================
+======== Wine ========
+최고모델: MinMaxScaler + RandomForestClassifier 1.0
+================================
+======== Digits ========
+최고모델: MinMaxScaler + SVC 0.9861111111111112
+================================
+'''
+
+'''
+#make_pipeline(scaler, model)
+======== Iris ========
+최고모델: MaxAbsScaler + SVC 1.0
+================================
+======== Breast Cancer ========
+최고모델: MinMaxScaler + SVC 0.9736842105263158
+================================
+======== Wine ========
+최고모델: MinMaxScaler + RandomForestClassifier 0.9722222222222222
+================================
+======== Digits ========
+최고모델: MinMaxScaler + SVC 0.975
+================================
+'''
+        
+
+'''
+#make_pipeline(scaler, model)
+#stratify=y
+======== Iris ========
+최고모델: MinMaxScaler + RandomForestClassifier 0.9666666666666667
+================================
+======== Breast Cancer ========
+최고모델: MinMaxScaler + RandomForestClassifier 0.9649122807017544
+================================
+======== Wine ========
+최고모델: MinMaxScaler + RandomForestClassifier 1.0
+================================
+======== Digits ========
+최고모델: MinMaxScaler + SVC 0.9861111111111112
+================================
+'''
