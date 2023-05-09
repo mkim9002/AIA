@@ -9,16 +9,6 @@ from sklearn.metrics import mean_absolute_error, r2_score
 path = 'c:/study/_data/AIFac_pollution/'
 save_path = 'c:/study/_save/AIFac_pollution/'
 submission = pd.read_csv(path + 'answer_sample.csv')
-# _data
-#     TRAIN
-#     TRAIN_AWS
-#     TEST_INPUT
-#     TEST_AWS
-#     Meta
-#     answer_sample.csv
-
-#변수명과 random state바꿔라
-
 
 train_files = glob.glob(path + "TRAIN/*.csv")
 # print(train_files)
@@ -117,12 +107,6 @@ x_submit = test_input_dataset[test_input_dataset.isna().any(axis=1)]
 # 결측지 있는 데이터 행만 추출
 print(x_submit)  #[78336 rows x 5 columns]
 print(x_submit.info())
-    
-#  0   연도      78336 non-null  int64
-#  1   PM2.5   0 non-null      float64
-#  2   locate  78336 non-null  int32
-#  3   month   78336 non-null  int8
-#  4   hour    78336 non-null  int8
 x_submit = x_submit.drop(['PM2.5'], axis=1)
 print(x_submit)
  
@@ -194,25 +178,3 @@ print(answer_sample_csv)
 
 answer_sample_csv.to_csv(path + 'm50_factory17_submit.csv',
                          index=None)
-
-
-#9.49238966점
-
-
-
-
-
-
-
-# # Update the submission dataframe with the predicted values
-# submission = submission.reindex(range(len(y_predict)))
-# submission['PM2.5'] = y_predict
-
-# # Save the results
-# submission.to_csv(save_path + 'submit41.csv', index=False)
-# print(f'Results saved to {save_path}submit.csv')
-
-
-
-
-

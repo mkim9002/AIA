@@ -46,12 +46,12 @@ X_test_scaled = scaler.transform(X_test)
 # Define the model architecture
 input_dim = X_train_scaled.shape[1]
 input_layer = Input(shape=(input_dim,))
-hidden_layer1 = Dense(240, activation='relu')(input_layer)
-hidden_layer2 = Dense(120, activation='relu')(hidden_layer1)
-hidden_layer3 = Dense(60, activation='relu')(hidden_layer2)
-hidden_layer4 = Dense(30, activation='relu')(hidden_layer3)
-hidden_layer5 = Dense(15, activation='relu')(hidden_layer4)
-hidden_layer6 = Dense(7, activation='relu')(hidden_layer5)
+hidden_layer1 = Dense(960, activation='relu')(input_layer)
+hidden_layer2 = Dense(480, activation='relu')(hidden_layer1)
+hidden_layer3 = Dense(240, activation='relu')(hidden_layer2)
+hidden_layer4 = Dense(120, activation='relu')(hidden_layer3)
+hidden_layer5 = Dense(60, activation='relu')(hidden_layer4)
+hidden_layer6 = Dense(30, activation='relu')(hidden_layer5)
 output_layer = Dense(1)(hidden_layer6)
 model = Model(inputs=input_layer, outputs=output_layer)
 
@@ -59,7 +59,7 @@ model = Model(inputs=input_layer, outputs=output_layer)
 model.compile(optimizer='adam', loss='mean_absolute_error')
 
 # Train the model
-model.fit(X_train_scaled, y_train, epochs=250, batch_size=128, validation_split=0.001, callbacks=[EarlyStopping(patience=5)])
+model.fit(X_train_scaled, y_train, epochs=2000, batch_size=128, validation_split=0.001, callbacks=[EarlyStopping(patience=5)])
 
 # Predict on the test set
 y_pred = model.predict(X_test_scaled)
@@ -69,5 +69,5 @@ submission = submission.reindex(range(len(y_pred)))
 submission['PM2.5'] = y_pred
 
 # Save the results
-submission.to_csv(save_path + 'submit27.csv', index=False)
+submission.to_csv(save_path + 'submit003.csv', index=False)
 print(f'Results saved to {save_path}submit.csv')

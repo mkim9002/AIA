@@ -137,9 +137,9 @@ x_train, x_test, y_train, y_test= train_test_split(
     x,y, train_size=0.1, random_state=98765, shuffle=True
 ) 
 
-parameter = {'n_estimators' : 50000,
+parameter = {'n_estimators' : 99999999999999,
               'learning_rate' : 0.07,   # 이게 성능이 가장 좋다
-              'max_depth' : 3,
+              'max_depth' : 1,
             #   'gamma' : 1,
             #   'min_child_weight' : 1,
             #   'subsample' : 0.7,
@@ -192,7 +192,7 @@ answer_sample_csv = pd.read_csv(path + 'answer_sample.csv',
 answer_sample_csv['PM2.5'] = y_submit
 print(answer_sample_csv)
 
-answer_sample_csv.to_csv(path + 'm50_factory16_submit.csv',
+answer_sample_csv.to_csv(path + '002_submit.csv',
                          index=None)
 
 
@@ -204,13 +204,6 @@ answer_sample_csv.to_csv(path + 'm50_factory16_submit.csv',
 
 
 
-# # Update the submission dataframe with the predicted values
-# submission = submission.reindex(range(len(y_predict)))
-# submission['PM2.5'] = y_predict
-
-# # Save the results
-# submission.to_csv(save_path + 'submit41.csv', index=False)
-# print(f'Results saved to {save_path}submit.csv')
 
 
 
