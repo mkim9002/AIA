@@ -134,12 +134,12 @@ print(x, '\n', y)
 
 
 x_train, x_test, y_train, y_test= train_test_split(
-    x,y, train_size=0.1, random_state=98765, shuffle=True
+    x,y, train_size=0.11, random_state=1, shuffle=True
 ) 
 
-parameter = {'n_estimators' : 99999999999999,
-              'learning_rate' : 0.07,   # 이게 성능이 가장 좋다
-              'max_depth' : 1,
+parameter = {'n_estimators' : 25000,
+              'learning_rate' : 0.077,   # 이게 성능이 가장 좋다
+              'max_depth' : 9,
             #   'gamma' : 1,
             #   'min_child_weight' : 1,
             #   'subsample' : 0.7,
@@ -159,7 +159,7 @@ model = XGBRegressor()
 #3. 컴파일, 훈련
 model.set_params(**parameter,
                  eval_metrics='mae',
-                 early_stopping_rounds=250,
+                 early_stopping_rounds=200,
                  )
 start_time = time.time()
 model.fit(x_train, y_train, verbose =1,
@@ -192,7 +192,7 @@ answer_sample_csv = pd.read_csv(path + 'answer_sample.csv',
 answer_sample_csv['PM2.5'] = y_submit
 print(answer_sample_csv)
 
-answer_sample_csv.to_csv(path + '002_submit.csv',
+answer_sample_csv.to_csv(path + '006_submit.csv',
                          index=None)
 
 
