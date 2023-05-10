@@ -250,47 +250,142 @@ output1 = Dense(70, activation='relu', name='ss4')(dense3)
 
 # 2.2 모델2
 input2 = Input(shape=(timesteps, 8))
-dense11 = LSTM(100, name='hd1')(input2)
-dense12 = Dense(90, name='hd2')(dense11)
-dense13 = Dense(70, name='hd3')(dense12)
-dense14 = Dense(60, name='hd4')(dense13)
+dense11 = LSTM(100, name='ds1')(input2)
+dense12 = Dense(90, name='ds2')(dense11)
+dense13 = Dense(70, name='ds3')(dense12)
+dense14 = Dense(60, name='ds4')(dense13)
 output2 = Dense(50, name='output2')(dense14)
 
+# 2.2 모델3
+input3 = Input(shape=(timesteps, 8))
+dense31 = LSTM(100, name='lg1')(input3)
+dense32 = Dense(90, name='lg2')(dense31)
+dense33 = Dense(70, name='lg3')(dense32)
+dense34 = Dense(60, name='lg4')(dense33)
+output3 = Dense(50, name='output3')(dense34)
+
+# 2.2 모델4
+input4 = Input(shape=(timesteps, 8))
+dense41 = LSTM(100, name='kt1')(input4)
+dense42 = Dense(90, name='kt2')(dense41)
+dense43 = Dense(70, name='kt3')(dense42)
+dense44 = Dense(60, name='kt4')(dense43)
+output4 = Dense(50, name='output4')(dense44)
+
+# 2.2 모델5
+input5 = Input(shape=(timesteps, 8))
+dense51 = LSTM(100, name='nc1')(input5)
+dense52 = Dense(90, name='nc2')(dense51)
+dense53 = Dense(70, name='nc3')(dense52)
+dense54 = Dense(60, name='nc4')(dense53)
+output5 = Dense(50, name='output5')(dense54)
+
+# 2.2 모델6
+input6 = Input(shape=(timesteps, 8))
+dense61 = LSTM(100, name='lt1')(input6)
+dense62 = Dense(90, name='lt2')(dense61)
+dense63 = Dense(70, name='lt3')(dense62)
+dense64 = Dense(60, name='lt4')(dense63)
+output6 = Dense(50, name='output6')(dense64)
+
+# 2.2 모델7
+input7 = Input(shape=(timesteps, 8))
+dense71 = LSTM(100, name='kw1')(input7)
+dense72 = Dense(90, name='kw2')(dense71)
+dense73 = Dense(70, name='kw3')(dense72)
+dense74 = Dense(60, name='kw4')(dense73)
+output7 = Dense(50, name='output7')(dense74)
+
+# 2.2 모델8
+input8 = Input(shape=(timesteps, 8))
+dense81 = LSTM(100, name='hw1')(input8)
+dense82 = Dense(90, name='hw2')(dense81)
+dense83 = Dense(70, name='hw3')(dense82)
+dense84 = Dense(60, name='hw4')(dense83)
+output8 = Dense(50, name='output8')(dense84)
+
+# 2.2 모델9
+input9 = Input(shape=(timesteps, 8))
+dense91 = LSTM(100, name='ki1')(input9)
+dense92 = Dense(90, name='ki2')(dense91)
+dense93 = Dense(70, name='ki3')(dense92)
+dense94 = Dense(60, name='ki4')(dense93)
+output9 = Dense(50, name='output9')(dense94)
+
+# 2.2 모델10
+input10 = Input(shape=(timesteps, 8))
+dense101 = LSTM(100, name='sg1')(input10)
+dense102 = Dense(90, name='sg2')(dense101)
+dense103 = Dense(70, name='sg3')(dense102)
+dense104 = Dense(60, name='sg4')(dense103)
+output10 = Dense(50, name='output10')(dense104)
+
 # 2.3 머지
-merge1 = Concatenate(name='mg1')([output1, output2])
+merge1 = Concatenate(name='mg1')([output1, output2, output3, output4, output5, output6, output7, output8, output9, output10])
 merge2 = Dense(50, activation='relu', name='mg2')(merge1)
 merge3 = Dense(30, activation='relu', name='mg3')(merge2)
-hidden_output = Dense(100, name='last')(merge3)
+merge4 = Dense(30, activation='relu', name='mg4')(merge3)
+merge5 = Dense(30, activation='relu', name='mg5')(merge4)
+merge6 = Dense(30, activation='relu', name='mg6')(merge5)
+merge7 = Dense(30, activation='relu', name='mg7')(merge6)
+merge8 = Dense(30, activation='relu', name='mg8')(merge7)
+merge9 = Dense(30, activation='relu', name='mg9')(merge8)
+merge10 = Dense(30, activation='relu', name='mg10')(merge9)
+hidden_output = Dense(100, name='last')(merge10)
 
 # 2.5 분기1
 bungi1 = Dense(30, activation='selu', name='bg1')(hidden_output)
 bungi2 = Dense(10, name='bg2')(bungi1)
-last_output1 = Dense(1, name='last1')(bungi2)
+bungi3 = Dense(10, name='bg3')(bungi2)
+bungi4 = Dense(10, name='bg4')(bungi3)
+bungi5 = Dense(10, name='bg5')(bungi4)
+bungi6 = Dense(10, name='bg6')(bungi5)
+bungi7 = Dense(10, name='bg7')(bungi6)
+bungi8 = Dense(10, name='bg8')(bungi7)
+bungi9 = Dense(10, name='bg9')(bungi8)
+bungi10 = Dense(10, name='bg10')(bungi9)
+last_output1 = Dense(1, name='last1')(bungi10)
 
 # 2.6 분기2
 last_output2 = Dense(1, activation='linear', name='last2')(hidden_output)
-model = Model(inputs=[input1, input2], outputs=[last_output1, last_output2])
+last_output3 = Dense(1, activation='linear', name='last3')(hidden_output)
+last_output4 = Dense(1, activation='linear', name='last4')(hidden_output)
+last_output5 = Dense(1, activation='linear', name='last5')(hidden_output)
+last_output6 = Dense(1, activation='linear', name='last6')(hidden_output)
+last_output7 = Dense(1, activation='linear', name='last7')(hidden_output)
+last_output8 = Dense(1, activation='linear', name='last8')(hidden_output)
+last_output9 = Dense(1, activation='linear', name='last9')(hidden_output)
+last_output10 = Dense(1, activation='linear', name='last10')(hidden_output)
+
+model = Model(inputs=[input1, input2, input3, input4, input5, input6, input7, input8, input9, input10], 
+              outputs=[last_output1,last_output2,last_output3,last_output4,last_output5,last_output6,last_output7,last_output8,last_output9,last_output10])
 
 model.summary()
 
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
 es = EarlyStopping(monitor='val_loss', mode='min', patience=300, restore_best_weights=True)
-hist = model.fit([doosan_x_train_split, lg_x_train_split], 
-                 [doosan_y_train_split, lg_y_train_split],
-                 [kt_x_train_split, nc_x_train_split], 
-                 [kt_y_train_split, nc_y_train_split], 
-                 [lotte_x_train_split, kiwoom_x_train_split], 
-                 [lotte_y_train_split, kiwoom_y_train_split], 
-                 [kia_x_train_split, ssg_x_train_split], 
-                 [kia_y_train_split, ssg_y_train_split], 
-                 epochs=1000, batch_size=128, validation_split=0.02, callbacks=[es])
+hist = model.fit([doosan_x_train_split, lg_x_train_split, kt_x_train_split, nc_x_train_split,lotte_x_train_split, hanwha_x_train_split, samsung_x_train_split, kiwoom_x_train_split, kia_x_train_split, ssg_x_train_split ], 
+                 [doosan_y_train_split, lg_y_train_split, kt_y_train_split, nc_y_train_split,lotte_y_train_split, hanwha_y_train_split, samsung_y_train_split, kiwoom_y_train_split, kia_y_train_split, ssg_y_train_split ],
+                 
+                #  [kt_x_train_split, nc_x_train_split], 
+                #  [kt_y_train_split, nc_y_train_split], 
+                #  [lotte_x_train_split, kiwoom_x_train_split], 
+                #  [lotte_y_train_split, kiwoom_y_train_split], 
+                #  [kia_x_train_split, ssg_x_train_split], 
+                #  [kia_y_train_split, ssg_y_train_split], 
+                 
+                 epochs=10, batch_size=128, validation_split=0.02, callbacks=[es])
+
+
+
 
 model.save(path_save + 'keras53_doosan2_kmg.h5')
 
 # 4. 평가, 예측
 
-loss = model.evaluate([doosan_x_test_split, lg_x_test_split], [doosan_y_test_split, lg_y_test_split])
+loss = model.evaluate([doosan_x_test_split, lg_x_test_split, kt_x_test_split, nc_x_test_split, lotte_x_test_split, kiwoom_x_test_split, hanwha_x_test_split, samsung_x_test_split, kia_x_test_split, ssg_x_test_split], 
+                      [doosan_y_test_split, lg_y_test_split, kt_y_test_split, nc_y_test_split, lotte_y_test_split, kiwoom_y_test_split, hanwha_y_test_split, samsung_y_test_split, kia_y_test_split, ssg_y_test_split])
 print('loss : ', loss)
 
 # for_r2 = model.predict([doosan_x_test_split, lg_x_test_split])
@@ -300,10 +395,40 @@ doosan_x_predict = doosan_x_test[-timesteps:]
 doosan_x_predict = doosan_x_predict.reshape(1, timesteps, 8)
 lg_x_predict = lg_x_test[-timesteps:]
 lg_x_predict = lg_x_predict.reshape(1, timesteps, 8)
+kt_x_predict = kt_x_test[-timesteps:]
+kt_x_predict = kt_x_predict.reshape(1, timesteps, 8)
+nc_x_predict = nc_x_test[-timesteps:]
+nc_x_predict = nc_x_predict.reshape(1, timesteps, 8)
+lotte_x_predict = lotte_x_test[-timesteps:]
+lotte_x_predict = lotte_x_predict.reshape(1, timesteps, 8)
+kiwoom_x_predict = kiwoom_x_test[-timesteps:]
+kiwoom_x_predict = kiwoom_x_predict.reshape(1, timesteps, 8)
+hanwha_x_predict = hanwha_x_test[-timesteps:]
+hanwha_x_predict = hanwha_x_predict.reshape(1, timesteps, 8)
+samsung_x_predict = samsung_x_test[-timesteps:]
+samsung_x_predict = samsung_x_predict.reshape(1, timesteps, 8)
+kia_x_predict = kia_x_test[-timesteps:]
+kia_x_predict = kia_x_predict.reshape(1, timesteps, 8)
+ssg_x_predict = ssg_x_test[-timesteps:]
+ssg_x_predict = ssg_x_predict.reshape(1, timesteps, 8)
 
-predict_result = model.predict([doosan_x_predict, lg_x_predict])
+predict_result = model.predict([doosan_x_predict, lg_x_predict, kt_x_predict, nc_x_predict, 
+                                lotte_x_predict, kiwoom_x_predict, hanwha_x_predict, 
+                                samsung_x_predict, kia_x_predict, ssg_x_predict])
 
-print("SCORE : ", np.round(predict_result[0], 2))
+print("DOOSAN SCORE  : ", np.round(predict_result[0], ))
+print("LG SCORE      : ", np.round(predict_result[1], ))
+print("KT SCORE      : ", np.round(predict_result[2], ))
+print("NC SCORE      : ", np.round(predict_result[3], ))
+print("LOTTE SCORE   : ", np.round(predict_result[4], ))
+print("KIWOOM SCORE  : ", np.round(predict_result[5], ))
+print("HANWHA SCORE  : ", np.round(predict_result[6], ))
+print("SAMSUNG SCORE : ", np.round(predict_result[7], ))
+print("KIA SCORE     : ", np.round(predict_result[8], ))
+print("SSG SCORE     : ", np.round(predict_result[9], ))
+
+
+
 
 
 
