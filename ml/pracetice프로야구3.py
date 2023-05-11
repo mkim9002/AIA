@@ -375,7 +375,7 @@ hist = model.fit([doosan_x_train_split, lg_x_train_split, kt_x_train_split, nc_x
                 #  [kia_x_train_split, ssg_x_train_split], 
                 #  [kia_y_train_split, ssg_y_train_split], 
                  
-                 epochs=10, batch_size=128, validation_split=0.02, callbacks=[es])
+                 epochs=200, batch_size=128, validation_split=0.02, callbacks=[es])
 
 
 
@@ -416,6 +416,9 @@ predict_result = model.predict([doosan_x_predict, lg_x_predict, kt_x_predict, nc
                                 lotte_x_predict, kiwoom_x_predict, hanwha_x_predict, 
                                 samsung_x_predict, kia_x_predict, ssg_x_predict])
 
+print("############ 최고 3600 배 고배당 가능  ###########")
+
+print("############ 프로야구 오늘의 각팀 예상 득점 스코어 ###########")
 print("DOOSAN SCORE  : ", np.round(predict_result[0], ))
 print("LG SCORE      : ", np.round(predict_result[1], ))
 print("KT SCORE      : ", np.round(predict_result[2], ))
@@ -426,6 +429,9 @@ print("HANWHA SCORE  : ", np.round(predict_result[6], ))
 print("SAMSUNG SCORE : ", np.round(predict_result[7], ))
 print("KIA SCORE     : ", np.round(predict_result[8], ))
 print("SSG SCORE     : ", np.round(predict_result[9], ))
+
+print("############ 최고 3600 배 고배당 가능  ###########")
+
 
 
 
