@@ -137,12 +137,12 @@ x_train, x_test, y_train, y_test= train_test_split(
     x,y, train_size=0.8, random_state=282, shuffle=True
 ) 
 
-parameter = {'n_estimators' : 20000,
+parameter = {'n_estimators' : 90000,
               'learning_rate' : 0.07,   # 이게 성능이 가장 좋다
-              'max_depth' : 1,
+              'max_depth' : 125,
               'gamma' : 1.1,
-              'min_child_weight' : 1.1,
-              'subsample' : 0.7,
+              'min_child_weight' : 1.12,
+              'subsample' : 0.732,
               'colsample_bytree' : 1,
               'colsample_bylevel' : 1,
               'colsample_bynode' : 1,
@@ -192,7 +192,7 @@ answer_sample_csv = pd.read_csv(path + 'answer_sample.csv',
 answer_sample_csv['PM2.5'] = y_submit
 print(answer_sample_csv)
 
-answer_sample_csv.to_csv(path + 'm50_factory17_submit.csv',
+answer_sample_csv.to_csv(path + 'm50_factory67_submit.csv',
                          index=None)
 
 
