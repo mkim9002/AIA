@@ -13,7 +13,7 @@ sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer())
 aaa =sess.run(변수)
 print('aaa :', aaa)
-s
+
 
 
 
