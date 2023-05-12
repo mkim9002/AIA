@@ -1,10 +1,10 @@
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-x = [1,2,3]
-y = [1,2,3]
-# x = [1,2]
-# y = [1,2]
+# x = [1,2,3]
+# y = [1,2,3]
+x = [1,2]
+y = [1,2]
 w = tf.compat.v1.placeholder(tf.float32)
 
 hypothesis = x*w

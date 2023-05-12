@@ -181,7 +181,7 @@ ssg_x_test = scaler.transform(ssg_x_test)
 
 
 # 1.2.6 timesteps
-timesteps = 51
+timesteps = 54
 
 # 1.2.7  split_x 
 def split_x(dt, st):
