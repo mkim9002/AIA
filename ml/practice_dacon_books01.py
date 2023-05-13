@@ -23,7 +23,7 @@ y = train_csv['Book-Rating']
 
 # train, test 분리
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size= 0.1, random_state= 123
+    x, y, train_size= 0.1, random_state= 189
 )
 
 categorical_cols = ['User-ID', 'Book-ID', 'Location', 'Book-Title', 'Book-Author', 'Publisher']
