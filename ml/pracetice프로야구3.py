@@ -5,14 +5,14 @@ from tensorflow.keras.layers import Dense, LSTM, GRU, Conv1D, Conv2D, Flatten, M
 from tensorflow.keras.layers import SimpleRNN, Concatenate, concatenate, Dropout, Bidirectional
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler,RobustScaler,MaxAbsScaler,StandardScaler
 from sklearn.metrics import r2_score, mean_squared_error
 
 
 # 1. data
 # 1.1 path, path_save, read_csv
-path = './_data/baseball/'
-path_save = './_save/baseball/'
+path = 'c:/study/_data/baseball/'
+path_save = 'c:/study/_save/baseball/'
 
 datasets_doosan = pd.read_csv(path + 'doosan_data.csv', index_col=0, encoding='cp949')
 datasets_lg = pd.read_csv(path + 'lg_data.csv', index_col=0, encoding='cp949')
@@ -142,10 +142,10 @@ ssg_x_train, ssg_x_test, ssg_y_train, ssg_y_test, \
                    lotte_x, lotte_y, kiwoom_x, kiwoom_y,
                    hanwha_x, hanwha_y, samsung_x, samsung_y,
                    kia_x, kia_y, ssg_x, ssg_y,
-                    train_size=0.7, shuffle=False)
+                    train_size=0.1, shuffle=False)
 
 # 1.2.5 scaler (0,1로 분리)
-scaler = MinMaxScaler()
+scaler = RobustScaler()
 
 doosan_x_train = scaler.fit_transform(doosan_x_train)
 doosan_x_test = scaler.transform(doosan_x_test)
@@ -181,7 +181,7 @@ ssg_x_test = scaler.transform(ssg_x_test)
 
 
 # 1.2.6 timesteps
-timesteps = 54
+timesteps = 9
 
 # 1.2.7  split_x 
 def split_x(dt, st):
@@ -243,98 +243,98 @@ print(lg_x_train_split.shape)      # (116, 9, 8)
 # 2. 모델구성
 # 2.1 모델1
 input1 = Input(shape=(timesteps, 8))
-dense1 = LSTM(100, activation='relu', name='ss1')(input1)
-dense2 = Dense(90, activation='relu', name='ss2')(dense1)
-dense3 = Dense(80, activation='relu', name='ss3')(dense2)
-output1 = Dense(70, activation='relu', name='ss4')(dense3)
+dense1 = LSTM(10, activation='relu', name='ss1')(input1)
+dense2 = Dense(10, activation='relu', name='ss2')(dense1)
+dense3 = Dense(10, activation='relu', name='ss3')(dense2)
+output1 = Dense(10, activation='relu', name='ss4')(dense3)
 
 # 2.2 모델2
 input2 = Input(shape=(timesteps, 8))
-dense11 = LSTM(100, name='ds1')(input2)
-dense12 = Dense(90, name='ds2')(dense11)
-dense13 = Dense(70, name='ds3')(dense12)
-dense14 = Dense(60, name='ds4')(dense13)
-output2 = Dense(50, name='output2')(dense14)
+dense11 = LSTM(10, name='ds1')(input2)
+dense12 = Dense(10, name='ds2')(dense11)
+dense13 = Dense(10, name='ds3')(dense12)
+dense14 = Dense(10, name='ds4')(dense13)
+output2 = Dense(10, name='output2')(dense14)
 
 # 2.2 모델3
 input3 = Input(shape=(timesteps, 8))
-dense31 = LSTM(100, name='lg1')(input3)
-dense32 = Dense(90, name='lg2')(dense31)
-dense33 = Dense(70, name='lg3')(dense32)
-dense34 = Dense(60, name='lg4')(dense33)
-output3 = Dense(50, name='output3')(dense34)
+dense31 = LSTM(10, name='lg1')(input3)
+dense32 = Dense(10, name='lg2')(dense31)
+dense33 = Dense(10, name='lg3')(dense32)
+dense34 = Dense(10, name='lg4')(dense33)
+output3 = Dense(10, name='output3')(dense34)
 
 # 2.2 모델4
 input4 = Input(shape=(timesteps, 8))
-dense41 = LSTM(100, name='kt1')(input4)
-dense42 = Dense(90, name='kt2')(dense41)
-dense43 = Dense(70, name='kt3')(dense42)
-dense44 = Dense(60, name='kt4')(dense43)
-output4 = Dense(50, name='output4')(dense44)
+dense41 = LSTM(10, name='kt1')(input4)
+dense42 = Dense(10, name='kt2')(dense41)
+dense43 = Dense(10, name='kt3')(dense42)
+dense44 = Dense(10, name='kt4')(dense43)
+output4 = Dense(10, name='output4')(dense44)
 
 # 2.2 모델5
 input5 = Input(shape=(timesteps, 8))
-dense51 = LSTM(100, name='nc1')(input5)
-dense52 = Dense(90, name='nc2')(dense51)
-dense53 = Dense(70, name='nc3')(dense52)
-dense54 = Dense(60, name='nc4')(dense53)
-output5 = Dense(50, name='output5')(dense54)
+dense51 = LSTM(10, name='nc1')(input5)
+dense52 = Dense(10, name='nc2')(dense51)
+dense53 = Dense(10, name='nc3')(dense52)
+dense54 = Dense(10, name='nc4')(dense53)
+output5 = Dense(10, name='output5')(dense54)
 
 # 2.2 모델6
 input6 = Input(shape=(timesteps, 8))
-dense61 = LSTM(100, name='lt1')(input6)
-dense62 = Dense(90, name='lt2')(dense61)
-dense63 = Dense(70, name='lt3')(dense62)
-dense64 = Dense(60, name='lt4')(dense63)
-output6 = Dense(50, name='output6')(dense64)
+dense61 = LSTM(10, name='lt1')(input6)
+dense62 = Dense(10, name='lt2')(dense61)
+dense63 = Dense(10, name='lt3')(dense62)
+dense64 = Dense(10, name='lt4')(dense63)
+output6 = Dense(10, name='output6')(dense64)
 
 # 2.2 모델7
 input7 = Input(shape=(timesteps, 8))
-dense71 = LSTM(100, name='kw1')(input7)
-dense72 = Dense(90, name='kw2')(dense71)
-dense73 = Dense(70, name='kw3')(dense72)
-dense74 = Dense(60, name='kw4')(dense73)
-output7 = Dense(50, name='output7')(dense74)
+dense71 = LSTM(10, name='kw1')(input7)
+dense72 = Dense(10, name='kw2')(dense71)
+dense73 = Dense(10, name='kw3')(dense72)
+dense74 = Dense(10, name='kw4')(dense73)
+output7 = Dense(10, name='output7')(dense74)
 
 # 2.2 모델8
 input8 = Input(shape=(timesteps, 8))
-dense81 = LSTM(100, name='hw1')(input8)
-dense82 = Dense(90, name='hw2')(dense81)
-dense83 = Dense(70, name='hw3')(dense82)
-dense84 = Dense(60, name='hw4')(dense83)
-output8 = Dense(50, name='output8')(dense84)
+dense81 = LSTM(10, name='hw1')(input8)
+dense82 = Dense(10, name='hw2')(dense81)
+dense83 = Dense(10, name='hw3')(dense82)
+dense84 = Dense(10, name='hw4')(dense83)
+output8 = Dense(10, name='output8')(dense84)
 
 # 2.2 모델9
 input9 = Input(shape=(timesteps, 8))
-dense91 = LSTM(100, name='ki1')(input9)
-dense92 = Dense(90, name='ki2')(dense91)
-dense93 = Dense(70, name='ki3')(dense92)
-dense94 = Dense(60, name='ki4')(dense93)
-output9 = Dense(50, name='output9')(dense94)
+dense91 = LSTM(10, name='ki1')(input9)
+dense92 = Dense(10, name='ki2')(dense91)
+dense93 = Dense(10, name='ki3')(dense92)
+dense94 = Dense(10, name='ki4')(dense93)
+output9 = Dense(10, name='output9')(dense94)
 
 # 2.2 모델10
 input10 = Input(shape=(timesteps, 8))
-dense101 = LSTM(100, name='sg1')(input10)
-dense102 = Dense(90, name='sg2')(dense101)
-dense103 = Dense(70, name='sg3')(dense102)
-dense104 = Dense(60, name='sg4')(dense103)
-output10 = Dense(50, name='output10')(dense104)
+dense101 = LSTM(10, name='sg1')(input10)
+dense102 = Dense(10, name='sg2')(dense101)
+dense103 = Dense(10, name='sg3')(dense102)
+dense104 = Dense(10, name='sg4')(dense103)
+output10 = Dense(10, name='output10')(dense104)
 
 # 2.3 머지
 merge1 = Concatenate(name='mg1')([output1, output2, output3, output4, output5, output6, output7, output8, output9, output10])
-merge2 = Dense(50, activation='relu', name='mg2')(merge1)
-merge3 = Dense(30, activation='relu', name='mg3')(merge2)
-merge4 = Dense(30, activation='relu', name='mg4')(merge3)
-merge5 = Dense(30, activation='relu', name='mg5')(merge4)
-merge6 = Dense(30, activation='relu', name='mg6')(merge5)
-merge7 = Dense(30, activation='relu', name='mg7')(merge6)
-merge8 = Dense(30, activation='relu', name='mg8')(merge7)
-merge9 = Dense(30, activation='relu', name='mg9')(merge8)
-merge10 = Dense(30, activation='relu', name='mg10')(merge9)
-hidden_output = Dense(100, name='last')(merge10)
+merge2 = Dense(10, activation='relu', name='mg2')(merge1)
+merge3 = Dense(10, activation='relu', name='mg3')(merge2)
+merge4 = Dense(10, activation='relu', name='mg4')(merge3)
+merge5 = Dense(10, activation='relu', name='mg5')(merge4)
+merge6 = Dense(10, activation='relu', name='mg6')(merge5)
+merge7 = Dense(10, activation='relu', name='mg7')(merge6)
+merge8 = Dense(10, activation='relu', name='mg8')(merge7)
+merge9 = Dense(10, activation='relu', name='mg9')(merge8)
+merge10 = Dense(10, activation='relu', name='mg10')(merge9)
+hidden_output = Dense(10, name='last')(merge10)
 
 # 2.5 분기1
-bungi1 = Dense(30, activation='selu', name='bg1')(hidden_output)
+bungi1 = Dense(10, activation='selu', name='bg1')(hidden_output)
 bungi2 = Dense(10, name='bg2')(bungi1)
 bungi3 = Dense(10, name='bg3')(bungi2)
 bungi4 = Dense(10, name='bg4')(bungi3)
@@ -362,12 +362,17 @@ model = Model(inputs=[input1, input2, input3, input4, input5, input6, input7, in
 
 model.summary()
 
+#rmsprop
+#adagrad
+#sgd
+#adam
+
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
-es = EarlyStopping(monitor='val_loss', mode='min', patience=800, restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', patience=200, restore_best_weights=True)
 hist = model.fit([doosan_x_train_split, lg_x_train_split, kt_x_train_split, nc_x_train_split,lotte_x_train_split, hanwha_x_train_split, samsung_x_train_split, kiwoom_x_train_split, kia_x_train_split, ssg_x_train_split ], 
                  [doosan_y_train_split, lg_y_train_split, kt_y_train_split, nc_y_train_split,lotte_y_train_split, hanwha_y_train_split, samsung_y_train_split, kiwoom_y_train_split, kia_y_train_split, ssg_y_train_split ],                                 
-                 epochs=25000, batch_size=128, validation_split=0.2, callbacks=[es])
+                 epochs=1000, batch_size=64, validation_split=0.01, callbacks=[es])
 
 
 

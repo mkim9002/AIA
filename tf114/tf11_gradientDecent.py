@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-x_train = [1,2,3]
-y_train = [1,2,3]
+x_train = [1]
+y_train = [2]
 x = tf.compat.v1. placeholder(tf.float32)
 y = tf.compat.v1. placeholder(tf.float32)
 
