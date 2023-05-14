@@ -11,8 +11,8 @@ from sklearn.metrics import r2_score, mean_squared_error
 
 # 1. data
 # 1.1 path, path_save, read_csv
-path = './_data/baseball/'
-path_save = './_save/baseball/'
+path = 'c:/study/_data/baseball/'
+path_save = 'c:/study/_save/baseball/'
 
 datasets_doosan = pd.read_csv(path + 'doosan_data.csv', index_col=0, encoding='cp949')
 datasets_lg = pd.read_csv(path + 'lg_data.csv', index_col=0, encoding='cp949')

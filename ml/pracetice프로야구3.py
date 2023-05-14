@@ -142,7 +142,7 @@ ssg_x_train, ssg_x_test, ssg_y_train, ssg_y_test, \
                    lotte_x, lotte_y, kiwoom_x, kiwoom_y,
                    hanwha_x, hanwha_y, samsung_x, samsung_y,
                    kia_x, kia_y, ssg_x, ssg_y,
-                    train_size=0.1, shuffle=False)
+                    train_size=0.3, shuffle=False)
 
 # 1.2.5 scaler (0,1로 분리)
 scaler = RobustScaler()
@@ -181,7 +181,7 @@ ssg_x_test = scaler.transform(ssg_x_test)
 
 
 # 1.2.6 timesteps
-timesteps = 9
+timesteps = 50
 
 # 1.2.7  split_x 
 def split_x(dt, st):
@@ -372,7 +372,7 @@ model.compile(loss='mse', optimizer='adam')
 es = EarlyStopping(monitor='val_loss', mode='min', patience=200, restore_best_weights=True)
 hist = model.fit([doosan_x_train_split, lg_x_train_split, kt_x_train_split, nc_x_train_split,lotte_x_train_split, hanwha_x_train_split, samsung_x_train_split, kiwoom_x_train_split, kia_x_train_split, ssg_x_train_split ], 
                  [doosan_y_train_split, lg_y_train_split, kt_y_train_split, nc_y_train_split,lotte_y_train_split, hanwha_y_train_split, samsung_y_train_split, kiwoom_y_train_split, kia_y_train_split, ssg_y_train_split ],                                 
-                 epochs=1000, batch_size=64, validation_split=0.01, callbacks=[es])
+                 epochs=25000, batch_size=128, validation_split=0.1, callbacks=[es])
 
 
 
