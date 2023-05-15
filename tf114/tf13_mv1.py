@@ -34,25 +34,26 @@ sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer())
 
 #방법1.
-for step in range(21):
-    _, loss_v, w1_val, w2_val, w3_val, b_val = sess.run([train, loss, w1, w2, w3, b], feed_dict={x1:x1_data, x2:x2_data, x3:x3_data, y:y_data})
-    print(step, loss_v, w1_val, w2_val, w3_val, b_val )
-sess.close()
+# for step in range(21):
+#     _, loss_v, w1_val, w2_val, w3_val, b_val = sess.run([train, loss, w1, w2, w3, b], 
+#                             feed_dict={x1:x1_data, x2:x2_data, x3:x3_data, y:y_data})
+#     print(step, loss_v, w1_val, w2_val, w3_val, b_val )
+# sess.close()
 
 
 #방법2.
-# with tf.compat.v1.Session() as sess:
-#     sess.run(tf.compat.v1.global_variables_initializer())
+with tf.compat.v1.Session() as sess:
+    sess.run(tf.compat.v1.global_variables_initializer())
 
-#     epochs = 2001
-#     for step in range(epochs):
-#         loss_val, _, w1_val, w2_val, w3_val, b_val = sess.run([loss, train, w1, w2, w3, b], 
-#                                                         feed_dict={x1: x1_data,
-#                                                          x2: x2_data,
-#                                                          x3: x3_data,
-#                                                          y: y_data})
-#         if step % 100 == 0:
-#             print(step, loss_val, w1_val, w2_val, w3_val, b_val)
+    epochs = 2001
+    for step in range(epochs):
+        loss_val, _, w1_val, w2_val, w3_val, b_val = sess.run([loss, train, w1, w2, w3, b], 
+                                                        feed_dict={x1: x1_data,
+                                                         x2: x2_data,
+                                                         x3: x3_data,
+                                                         y: y_data})
+        if step % 100 == 0:
+            print(step, loss_val, w1_val, w2_val, w3_val, b_val)
 
 #4. 평가
 from sklearn.metrics import r2_score, mean_absolute_error 

@@ -372,7 +372,7 @@ model.compile(loss='mse', optimizer='adagrad')
 es = EarlyStopping(monitor='val_loss', mode='min', patience=200, restore_best_weights=True)
 hist = model.fit([doosan_x_train_split, lg_x_train_split, kt_x_train_split, nc_x_train_split,lotte_x_train_split, hanwha_x_train_split, samsung_x_train_split, kiwoom_x_train_split, kia_x_train_split, ssg_x_train_split ], 
                  [doosan_y_train_split, lg_y_train_split, kt_y_train_split, nc_y_train_split,lotte_y_train_split, hanwha_y_train_split, samsung_y_train_split, kiwoom_y_train_split, kia_y_train_split, ssg_y_train_split ],                                 
-                 epochs=25000, batch_size=128, validation_split=0.1, callbacks=[es])
+                 epochs=1000, batch_size=99, validation_split=0.1, callbacks=[es])
 
 
 
