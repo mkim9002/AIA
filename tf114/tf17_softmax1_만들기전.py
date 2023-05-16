@@ -59,3 +59,4 @@ with tf.compat.v1.Session() as sess:
     print("MSE:", mse)
     print("MAE:", mae)
     print("Accuracy:", accuracy)
+
