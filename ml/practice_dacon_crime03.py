@@ -149,7 +149,7 @@ print(y.shape)
 
 x_train, x_test, y_train, y_test = train_test_split(
     x,y,
-    train_size=0.5,random_state=337,stratify=y
+    train_size=0.1,random_state=337,stratify=y
 )
 # 114 f1 : 0.531572088615093
 # 8715 f1 : 0.5325198436204241
@@ -246,9 +246,9 @@ model =   XGBClassifier(
             colsample_bylevel= 0.5903167248154069,
             colsample_bynode= 0.6162948448917287,
             colsample_bytree= 0.6637033614330781, 
-            gamma= 6, 
+            gamma= 3, 
             learning_rate= 0.4999718214812156,
-            max_depth= 6,
+            max_depth= 3,
             min_child_weight= 177.95618176346483, 
             n_estimators= 702, 
             reg_alpha= 4.489071402553407, 
@@ -293,11 +293,9 @@ print(submission.shape)
 y_submit = model.predict(test_csv)
 print(y_submit.shape)
 submission['TARGET'] =y_submit
-submission.to_csv(path_save+'00001_last.csv')
+submission.to_csv(path_save+'00002_last.csv')
 
 '''
-acc : 0.12014000459031443
-rmse : 3.5878959677402937
-걸린시간: 26.98
-실 점수 : 4.69656
+0.5300490938
+
 '''
