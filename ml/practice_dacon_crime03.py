@@ -246,9 +246,9 @@ model =   XGBClassifier(
             colsample_bylevel= 0.5903167248154069,
             colsample_bynode= 0.6162948448917287,
             colsample_bytree= 0.6637033614330781, 
-            gamma= 3, 
+            gamma= 6, 
             learning_rate= 0.4999718214812156,
-            max_depth= 3,
+            max_depth= 6,
             min_child_weight= 177.95618176346483, 
             n_estimators= 702, 
             reg_alpha= 4.489071402553407, 
@@ -263,12 +263,12 @@ model =   XGBClassifier(
 # 배깅 :  0.2564463677
 # 3. 훈련
 print('훈련')
-num_boost_round = int(10.0)
+num_boost_round = int(11.0)
 model.fit(
     x_train,y_train,
     eval_set=[(x_train, y_train),(x_test, y_test)],
     eval_metric="mlogloss",
-    early_stopping_rounds=100,
+    early_stopping_rounds=101,
     verbose=10, 
           )
 
