@@ -46,29 +46,7 @@ print(test_csv) # y가 없다. train_csv['Calories_Burned']
 print(test_csv.shape) # (159621, 8)
 
 print(train_csv.info()) 
-'''
-#   Column   Non-Null Count  Dtype
----  ------   --------------  -----
- 0   월        84406 non-null  int64
- 1   요일       84406 non-null  object
- 2   시간       84406 non-null  int64
- 3   소관경찰서    84406 non-null  int64
- 4   소관지역     84406 non-null  float64
- 5   사건발생거리   84406 non-null  float64
- 6   강수량(mm)  84406 non-null  float64
- 9   풍향       84406 non-null  float64
- 10  안개       84406 non-null  float64
- 11  짙은안개     84406 non-null  float64
- 12  번개       84406 non-null  float64
- 13  진눈깨비     84406 non-null  float64
- 14  서리       84406 non-null  float64
- 15  연기/연무    84406 non-null  float64
- 16  눈날림      84406 non-null  float64
- 17  범죄발생지    84406 non-null  object
- 18  TARGET   84406 non-null  int64
-dtypes: float64(13), int64(4), object(2)
 
-'''
 
 
 import matplotlib.pyplot as plt
@@ -116,64 +94,8 @@ y = train_csv['TARGET']
 print(y.shape)
 
 
-# scaler = StandardScaler()
-# x_scaled = scaler.fit_transform(x)
-
-# vif = pd.DataFrame()
-# vif['variables'] = x.columns
-# vif['vif'] = [variance_inflation_factor(x_scaled,i) for i in range(x_scaled.shape[1])]
-# print(vif)
-'''
-
-   variables       vif
-0            월  1.282735
-1          요일  1.032687
-2          시간  1.000298
-3    소관경찰서  1.850206
-4      소관지역  1.844475
-5  사건발생거리  1.014597
-6    강수량(mm)  1.270713
-7    강설량(mm)  1.740622
-8    적설량(cm)  1.679097
-9          풍향  1.056074
-10         안개  1.595804
-11     짙은안개  1.217778
-12         번개  1.330880
-13     진눈깨비  1.573900
-14         서리  1.640009
-15    연기/연무  1.262941
-16       눈날림  1.439312
-17   범죄발생지  1.001912
-
-'''
-
-x_train, x_test, y_train, y_test = train_test_split(
-    x,y,
-    train_size=0.1,random_state=337,stratify=y
-)
-# 114 f1 : 0.531572088615093
-# 8715 f1 : 0.5325198436204241
-# 337 f1 : 0.5217391304347826
 
 
-
-####################################### 상관관계 찾기 #####################################
-# import matplotlib.pyplot as plt
-# import seaborn as sns
-
-# print(test_csv.corr())
-# plt.figure(figsize=(10,8))
-# sns.set(font_scale=1.2)
-# sns.heatmap(train_csv.corr(),square=True, annot=True,cbar=True)
-# plt.show()
-
-
-# ValueError: Object arrays cannot be loaded when allow_pickle=False
-# 저장한걸 스케일러 사용할 거면 이런식으로 사용해야함 
-
-
-
-'''
 n_splits = 5
 kfold = StratifiedKFold(
     n_splits = n_splits,#디폴트 5  옛날에는 3이였음 근데 바뀐거면 지금것이 좋다는 의미 
@@ -234,68 +156,3 @@ best = fmin(
 )
 print('best : ',best)
 
-'''
-
-
-
-print('모델 시작')
-start = time.time()
-# model = GridSearchCV(
-# model= BaggingClassifier(
-model =   XGBClassifier(
-            colsample_bylevel= 0.5903167248154069,
-            colsample_bynode= 0.6162948448917287,
-            colsample_bytree= 0.6637033614330781, 
-            gamma= 6, 
-            learning_rate= 0.4999718214812156,
-            max_depth= 6,
-            min_child_weight= 177.95618176346483, 
-            n_estimators= 702, 
-            reg_alpha= 4.489071402553407, 
-            reg_lambda= 31.90187287150227, 
-            subsample= 0.767545370379666,
-)
-#       n_estimators=10,
-#       random_state=8715,
-#       bootstrap= False,
-# )
-
-# 배깅 :  0.2564463677
-# 3. 훈련
-print('훈련')
-num_boost_round = int(11.0)
-model.fit(
-    x_train,y_train,
-    eval_set=[(x_train, y_train),(x_test, y_test)],
-    eval_metric="mlogloss",
-    early_stopping_rounds=101,
-    verbose=10, 
-          )
-
-# 4. 평가, 예측 
-print('훈련')
-result = model.score(x_test,y_test)
-print(" result: ", result)
-y_pred= model.predict(x_test)  
-# y_pred=np.argmax(y_pred,axis=1)
-print(y_pred)
-acc = accuracy_score(y_test,y_pred)
-print('acc :',acc)
-f1 = f1_score(y_test,y_pred,average='micro')
-print('f1 :',f1)
-
-end = time.time()
-print('걸린시간:',round(end-start,2))
-
-# 5. 제출
-submission  = pd.read_csv(path+'sample_submission.csv',index_col=0)
-print(submission.shape)
-y_submit = model.predict(test_csv)
-print(y_submit.shape)
-submission['TARGET'] =y_submit
-submission.to_csv(path_save+'00002_last.csv')
-
-'''
-0.5300490938
-
-'''
