@@ -8,7 +8,7 @@ from sklearn.datasets import load_breast_cancer
 x,y = load_breast_cancer(return_X_y=True)
 
 print(x.shape, y.shape) #(150, 4) (150,)
-
+###
 #.model
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
