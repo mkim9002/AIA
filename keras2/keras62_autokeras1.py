@@ -11,7 +11,7 @@ model = ak.ImageClassifier(
     overwrite=False,   #
     max_trials=2
 )
-
+###
 #3. 콤파일 훈련
 start =time.time()
 model.fit(x_train,y_train, epochs =10, validation_split=0.15)
