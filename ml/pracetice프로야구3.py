@@ -145,7 +145,7 @@ ssg_x_train, ssg_x_test, ssg_y_train, ssg_y_test, \
                     train_size=0.3, shuffle=False)
 
 # 1.2.5 scaler (0,1로 분리)
-scaler = RobustScaler()
+scaler = MaxAbsScaler()
 
 doosan_x_train = scaler.fit_transform(doosan_x_train)
 doosan_x_test = scaler.transform(doosan_x_test)
@@ -181,7 +181,7 @@ ssg_x_test = scaler.transform(ssg_x_test)
 
 
 # 1.2.6 timesteps
-timesteps = 50
+timesteps = 51
 
 # 1.2.7  split_x 
 def split_x(dt, st):
