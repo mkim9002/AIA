@@ -1,72 +1,77 @@
-#loss 와 weight 의 관계를 그려
-from tensorflow.keras.models import load_model
+# loss와 weight의 관계 그리기 // ==> 보류 
+
 from tensorflow.keras.datasets import mnist
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D, GlobalAveragePooling2D
+from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
-import time
-import matplotlib.pyplot as plt
+from tensorflow.python.keras.models import Sequential, load_model
+from tensorflow.python.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
+from tensorflow.python.keras.layers import GlobalAveragePooling2D
+from tensorflow.python.keras.callbacks import EarlyStopping
+from sklearn.metrics import accuracy_score 
+import numpy as np
+import tensorflow as tf
+tf.random.set_seed(777)
 
-# Load the MNIST dataset
+#1. 데이터 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
+# print(x_train.shape, y_train.shape) #(60000, 28, 28) (60000,) 
+# print(x_test.shape, y_test.shape) # (10000, 28, 28) (10000,)
 
-x_train = x_train.reshape(60000, 28, 28, 1)
-x_test = x_test.reshape(10000, 28, 28, 1)
 
+print(np.unique(y_train,return_counts=True)) 
+#np.unique #array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+#one-hot-coding
+print(y_train)       #[5 0 4 ... 5 6 8]
+print(y_train.shape) #(60000,)
 y_train = to_categorical(y_train)
 y_test = to_categorical(y_test)
+print(y_train)       #[[0. 0. 0. ... 0. 0. 0.]..[0.0.0]]
+print(y_train.shape) #(60000, 10)
 
-# Create the model
-model = Sequential()
-model.add(Conv2D(64, (2, 2), padding='same', input_shape=(28, 28, 1)))
-model.add(MaxPooling2D())
-model.add(Conv2D(filters=64, kernel_size=(2, 2), padding='valid', activation='relu'))
-model.add(Conv2D(32, (2, 2)))
-model.add(GlobalAveragePooling2D())
-model.add(Dense(10, activation='softmax'))
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+
+x_train = x_train.reshape(60000,28*28)
+x_test = x_test.reshape(10000,784)
+
+scaler = MinMaxScaler() 
+scaler.fit(x_train) 
+x_train = scaler.transform(x_train) 
+x_test = scaler.transform(x_test)
+
+x_train = x_train.reshape(60000,28,28,1)
+x_test = x_test.reshape(10000,28,28,1)
+
+#2. 모델구성 
+model = load_model('./_save/keras70_1_mnist_graph.h5')
 
 model.summary()
 
-# Compile the model
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'])
 
-# Train the model
-start = time.time()
-hist = model.fit(x_train, y_train, epochs=5, batch_size=128, validation_split=0.2)
-end = time.time()
+#2. 모델 - 피클 불러오기
+# history 객체 로드
+import pickle
 
-# Save the model
-model.save('./_save/keras_mnist_model.h5')
+with open('./_save/pickle_test/keras70_1_mnist_grape.pkl', 'rb') as f:
+    hist = pickle.load(f)
 
-# Load the model from the saved file
-model = load_model('./_save/keras_mnist_model.h5')
 
-# Get the training history from the loaded model
-training_loss = hist.history['loss']
-validation_loss = hist.history['val_loss']
-accuracy = hist.history['acc']
-validation_accuracy = hist.history['val_acc']
+###################### 시각화 ###############################################################
+import matplotlib.pyplot as plt
 
-# Plot the loss graph
 plt.figure(figsize=(9, 5))
-plt.subplot(2, 1, 1)
-plt.plot(training_loss, marker=',', c='red', label='loss')
-plt.plot(validation_loss, marker=',', c='blue', label='val_loss')
-plt.grid()
-plt.title('Loss')
-plt.ylabel('Loss')
-plt.xlabel('Epochs')
-plt.legend(loc='upper right')
 
-# Plot the accuracy graph
-plt.subplot(2, 1, 2)
-plt.plot(accuracy, marker=',', c='red', label='acc')
-plt.plot(validation_accuracy, marker=',', c='blue', label='val_acc')
+# Loss와 acc 그래프
+plt.plot(hist['loss'], marker='o', c='red', label='loss')
+plt.plot(hist['val_loss'], marker='o', c='blue', label='val_loss')
+plt.plot(hist['acc'], marker='o', c='green', label='acc')
+plt.plot(hist['val_acc'], marker='o', c='purple', label='val_acc')
 plt.grid()
-plt.title('Accuracy')
-plt.ylabel('Accuracy')
+plt.title('Loss and acc')
 plt.xlabel('Epochs')
-plt.legend(['acc', 'val_acc'])
+plt.ylabel('Value')
+plt.legend()
 
-plt.tight_layout()
 plt.show()
+
+
