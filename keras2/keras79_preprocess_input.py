@@ -7,8 +7,8 @@ model = ResNet50(weights='imagenet')
 # model = ResNet50(weights= None)
 # model = ResNet50(weights='경로')
 
-# path = 'D:/archive/training_set/training_set/dogs/dog.6.jpg'
-path = 'C:/Users/bitcamp/Pictures/Saved Pictures/나2.JPG'
+path = 'D:/archive/training_set/training_set/dogs/dog.6.jpg'
+# path = 'C:/Users/bitcamp/Pictures/Saved Pictures/나2.JPG'
 
 
 img = image.load_img(path, target_size=(224,224))
