@@ -1,7 +1,7 @@
 import autokeras as ak
 import tensorflow as tf
 import time
-#####################
+##########################
 #1. 데이터
 (x_train, y_train), (x_test,y_test)= \
                             tf.keras.datasets.mnist.load_data()
