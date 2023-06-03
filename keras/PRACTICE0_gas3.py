@@ -16,6 +16,7 @@ def type_to_HP(type):
     HP = [29, 19, 9, 49, 29, 29, 29, 29]
     gen = (HP[i] for i in type)
     return list(gen)
+#####
 
 train_data['type'] = type_to_HP(train_data['type'])
 test_data['type'] = type_to_HP(test_data['type'])
