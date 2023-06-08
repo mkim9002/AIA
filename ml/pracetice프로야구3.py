@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler,RobustScaler,MaxAbsScaler,StandardScaler
 from sklearn.metrics import r2_score, mean_squared_error
 
-
+####
 # 1. data
 # 1.1 path, path_save, read_csv
 path = 'c:/study/_data/baseball/'
