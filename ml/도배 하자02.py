@@ -25,7 +25,7 @@ from tqdm.auto import tqdm
 
 import warnings
 warnings.filterwarnings(action='ignore') 
-
+##
 CFG = {
     'IMG_SIZE':224,
     'EPOCHS':10,

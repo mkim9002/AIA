@@ -8,6 +8,18 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler,RobustScaler,MaxAbsScaler,StandardScaler
 from sklearn.metrics import r2_score, mean_squared_error
 
+
+# GPU 설정
+import tensorflow as tf
+gpus = tf.config.experimental.list_physical_devices('GPU')
+if gpus:
+    try:
+        # GPU 메모리 증분 설정
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+    except RuntimeError as e:
+        print(e)
+        
 #######
 # 1. data
 # 1.1 path, path_save, read_csv
