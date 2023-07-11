@@ -8,7 +8,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.preprocessing import MaxAbsScaler, RobustScaler
 
 import time
-##
+####
 # 1. 데이터 
 datasets = load_breast_cancer()
 print(datasets)
