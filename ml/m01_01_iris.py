@@ -8,7 +8,7 @@ from sklearn.datasets import load_iris
 x,y = load_iris(return_X_y=True)
 
 print(x.shape, y.shape) #(150, 4) (150,)
-##
+####
 #.model
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
