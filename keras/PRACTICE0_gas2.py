@@ -10,7 +10,7 @@ save_path= 'd:/study_data/_save/gas/'
 train_data = pd.read_csv(path+'train_data.csv')
 test_data = pd.read_csv(path+'test_data.csv')
 submission = pd.read_csv(path+'answer_sample.csv')
-##################
+####################
 # Preprocess data
 def type_to_HP(type):
     HP=[30,20,10,50,30,30,30,30]
