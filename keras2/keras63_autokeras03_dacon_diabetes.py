@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler, RobustScaler
-
+##
 # Load and preprocess the data
 train_csv = pd.read_csv('d:/study/_data/dacon_diabetes/train.csv', index_col=0)
 train_csv = train_csv.dropna()
